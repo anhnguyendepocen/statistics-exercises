@@ -15,7 +15,28 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Exercise 1.2
 
-#TODO
+**Evaluate $Pr(X < 0.5, Y < 0.5)$ if $X$ and $Y$ have joint p.d.f. (1.2).**
+
+For any constants $a \leq b$, we have that:
+$$Pr(a \leq X \leq b,\, a \leq Y \leq b) = \int_a^b\int_a^b f(x,y)\, dx \, dy$$ 
+with $f(x,y) \geq 0$ and $\int_{-\infty}^{\infty}\int_{-\infty}^{\infty}f(x,y)\, dx\, dy = 1$.
+
+The joint probability distribution function for $X,Y$ is defined as:
+
+$$f(x,y) = \begin{cases}x+\frac{3}{2}y^2 & \mbox{if }0<x<1 \mbox{ and } 0<y<1\\0 & \mbox{otherwise} \end{cases}$$
+
+Thus, we can consider 0 as the lower bound $a$ of the first equation and, by definition of the problem, 0.5 as the upper bound $b$. We have that:
+
+$$
+\begin{aligned}
+Pr(X < 0.5, Y < 0.5) &= \int_{0}^{0.5}\int_{0}^{0.5} f(x,y) \,dx\,dy \\
+&= \int_{0}^{0.5}\int_{0}^{0.5} x+\frac{3}{2}y^2 \,dx\,dy \\
+&= \int_{0}^{0.5}[\frac{1}{2}x^2+\frac{3}{2}y^2x]_{x=0}^{x=0.5}\,dy \\
+&= \int_{0}^{0.5}\frac{1}{8}+\frac{3}{4}y^2\,dy \\
+&= [\frac{1}{8}y+\frac{1}{4}y^3]_{y=0}^{y=0.5} \\
+&= \frac{1}{16} + \frac{1}{32} = \frac{3}{32} = 0.09357
+\end{aligned}
+$$
 
 ## Exercise 1.6
 
