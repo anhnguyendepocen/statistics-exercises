@@ -16,16 +16,19 @@ In this section are listed the homeworks assigned from the previously cited sour
 
 ### Homework 1
 
-**Due date:** March, Fridat 29th 2019
-**Group:** Group C
-**Members:** Katja Valjavec, Leticia Negrao Pinto, Gabriele Sarti
-**Sources:**
+* **Due date:** March, Fridat 29th 2019
 
-* DAAG, Chapter 1, page 38
+* **Group:** Group C
 
-* CS, Chapter 1, page 17
+* **Members:** Katja Valjavec, Leticia Negrao Pinto, Gabriele Sarti
 
-* LAB 1
+* **Sources:**
+
+  * DAAG, Chapter 1, page 38
+
+  * CS, Chapter 1, page 17
+
+  * LAB 1
 
 |                      | DAAG      | CS       | LAB     |
 |----------------------|-----------|----------|---------|
