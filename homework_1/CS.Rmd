@@ -1,0 +1,30 @@
+---
+title: "Core Statistics"
+author: "Gabriele Sarti, Katja Valjavec, Leticia Negrao Pinto"
+date: "March 19, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Exercise 1.1
+
+#TODO
+
+## Exercise 1.2
+
+#TODO
+
+## Exercise 1.6
+
+#TODO
+
+## Exercise 1.8
+
+#TODO
+
+## Exercise 1.9
+
+#TODO

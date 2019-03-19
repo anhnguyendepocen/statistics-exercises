@@ -1,0 +1,42 @@
+---
+title: "Data Analysis and Graphics Using R"
+author: "Gabriele Sarti, Katja Valiavec, Leticia Negrao Pinto"
+date: "March 19, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Exercise 4
+
+#TODO
+
+## Exercise 6
+
+#TODO
+
+## Exercise 11
+
+#TODO
+
+## Exercise 12
+
+#TODO
+
+## Exercise 13
+
+#TODO
+
+## Exercise 15
+
+#TODO
+
+## Exercise 17
+
+#TODO
+
+## Exercise 20
+
+#TODO
