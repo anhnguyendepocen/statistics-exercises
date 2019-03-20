@@ -11,6 +11,14 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Exercise 1.1
 
+**Exponential random variable, $X \geq 0$, has p.d.f. $f(x) = \lambda \exp(-\lambdax).**
+
+**1. Find the c.d.f. and the quantile function for $X$.**
+
+**2. Find $Pr(X < \lambda)$ and the median of $X$**
+
+**3. Find the mean and variance of $X$**
+
 #TODO
 
 ## Exercise 1.2
@@ -40,12 +48,75 @@ $$
 
 ## Exercise 1.6
 
+**Let $X$ and $Y$ be non-independent random variables, such that $var(X) = \sigma^2_x,\; var(Y) = \sigma^2_y$ and $cov(X,Y) = \sigma^2_{xy}$. Using the result from Section 1.6.2 find $var(X + Y)$ and $var(X-Y)$.**
+
 #TODO
 
 ## Exercise 1.8
+
+**If $\log(X) \sim N(\mu, \sigma^2)$, find the p.d.f. of X.**
 
 #TODO
 
 ## Exercise 1.9
 
-#TODO
+**Discrete random variable $Y$ has a Poisson distribution with parameter $\lambda$ if its p.d.f. is $f(y) = \lambda^y e^{−\lambda}/y!$, for $y = 0, 1,\dots$**
+
+**a. Find the moment generating function for $Y$ (hint: the power series representation of the exponential function is useful).**
+
+**b. If $Y_1 \sim \mbox{Poi}(\lambda_1)$ and independently $Y_2 \sim \mbox{Poi}(\lambda_2)$, deduce the distribution of $Y_1 + Y_2$ , by employing a general property of m.g.f.s.**
+
+**c. Making use of the previous result and the central limit theorem, deduce the normal approximation to the Poisson distribution.**
+
+**d. Confirm the previous result graphically, using R functions dpois , dnorm ,plot or barplot and lines. Confirm that the approximation improves with increasing $\lambda$.**
+
+a. Since the Poisson distribution is discrete and the moment generating function is defined as $M_X(s) = E(e^{sX})$, with $s$ real, we have that:
+
+$$
+\begin{aligned}
+M_Y(s) = E(e^{sY}) &= \sum^\infty_{x=0}e^{sy} \frac{\lambda^y e^{−\lambda}}{y!} \\
+&= e^{-\lambda} \sum^\infty_{x=0}\frac{(\lambda e^s)^y}{y!}
+\end{aligned}
+$$
+Given the power series representation of the exponential function $\sum^\infty_{x=0}\frac{a^y}{y!} = e^a$, we can express $M_Y(s)$ as:
+
+$$M_Y(s) = e^{-\lambda}e^{\lambda e^s} = e^{\lambda(e^s - 1)}$$
+
+b. Since $Y_1$ and $Y_2$ are independent random variables, we have that:
+
+$$M_{Y_1 + Y_2}(s) = M_{Y_1}(s)M_{Y_2}(s) = e^{\lambda_1(e^s - 1)}e^{\lambda_2(e^s - 1)} = e^{(\lambda_1 + \lambda_2)(e^s - 1)}$$
+Thus, from its moment generating function we can deduce that $Y_1 + Y_2 \sim \mbox{Pois}(\lambda_1 + \lambda_2)$
+
+c. From the previous point it is evident that if $Y_i \sim \mbox{Pois}(\lambda_i)$ for $i = 1,\dots, n$ are independent and $\lambda = \sum^n_{i=1}\lambda_i$, then $Y = (\sum^n_{i=1}Y_i) \sim \mbox{Pois}(\lambda)$. By applying the Central Limit Theorem, we get:
+
+$$Y \sim N(\mu = \lambda, \sigma^2 = \lambda)$$
+Thus, if $\lambda$ is large the distribution $\mbox{Pois}(\lambda)$ gets approximated well by the distribution $N(\lambda, \lambda)$
+
+d. In the following graph we can see five examples of Poisson distribution with growing values of $\lambda$ (in color) and their respective normal approximations (in orange). It is evident how approximations are closer to the original distributions for larger values of $\lambda$.
+
+``` {r echo=TRUE}
+lambda <- c(5, 10, 25, 50, 100)
+plot(0:130, dpois(0:130, lambda[1]), xlim=c(0,130), ylim=c(0,0.2), type='l', xlab=expression(lambda), ylab="f(x)", main=expression(paste("Some examples of normal approximations to the Poisson distribution w.r.t.",lambda)))
+lines(0:130, dpois(0:130, lambda[2]), col='green')
+lines(0:130, dpois(0:130, lambda[3]), col='red')
+lines(0:130, dpois(0:130, lambda[4]), col='blue')
+lines(0:130, dpois(0:130, lambda[5]), col='purple')
+
+lines(0:130, dnorm(0:130, lambda[1], sqrt(lambda[1])), col='orange')
+lines(0:130, dnorm(0:130, lambda[2], sqrt(lambda[2])), col='orange')
+lines(0:130, dnorm(0:130, lambda[3], sqrt(lambda[3])), col='orange')
+lines(0:130, dnorm(0:130, lambda[4], sqrt(lambda[4])), col='orange')
+lines(0:130, dnorm(0:130, lambda[5], sqrt(lambda[5])), col='orange')
+```
+
+In the following graph, we plot the sum of pointwise distances between Poisson distributions and their respective normal approximations for $0 < \lambda < 50$. As we expected from our computations and our previous graph, the error decreases when $\lambda$ increases.
+
+``` {r echo=TRUE}
+difference <- function(lambda){
+  x <- dpois(0:lambda, lambda) - dnorm(0:lambda, lambda, sqrt(lambda))
+  return(sum(x))
+}
+difference=Vectorize(difference)
+lambda <- c(1:50)
+plot(lambda, difference(lambda), type='l', col='red', xlab=expression(lambda), ylab=expression(paste("N(",lambda,",",lambda,") - Pois(", lambda, ")")), main=expression(paste("Error of the normal approximation to the Poisson distribution w.r.t. ",lambda)))
+```
