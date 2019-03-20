@@ -11,32 +11,102 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Exercise 1
 
+* **Write a function binomial(x,n,p) for the binomial distribution above, depending on parameters x,n,p, and test it with some prespecified values. Use the function choose() for the binomial coefficient.**
+
+* **Plot two binomials with n=20, and p=0.3,0.6 respectively.**
+
 #TODO
 
 ## Exercise 2
+
+* **Generate in R the same output, but using rgeom() for generating the random variables. Hint: generate n times three geometric distribution X1,…,X3 with p=0.08, store them in a matrix and compute then the sum Y.**
 
 #TODO
 
 ## Exercise 3
 
-#TODO
+* **Show in R, also graphically, that Gamma(n/2,1/2) coincides with a** $\chi^2_n$.
+
+* **Find the 5% and the 95% quantiles of a Gamma(3,3).**
+
+From the following plot we can see that the $\chi^2_n$ and the $\gamma(\frac{n}{2},\frac{1}{2})$ distributions coincide.
+
+```{r echo=TRUE}
+shapes <- c(5, 10, 25, 50)
+plot(1:100, dgamma(1:100, shapes[1]/2, 1/2), type="l", col='black', xlab="x", ylab="f(x)", main="Comparison between Gamma and Chi-square distributions")
+lines(1:100, dchisq(1:100, shapes[1]), col='red')
+lines(1:100, dgamma(1:100, shapes[2]/2, 1/2), type="l", col='black')
+lines(1:100, dchisq(1:100, shapes[2]), col='red')
+lines(1:100, dgamma(1:100, shapes[3]/2, 1/2), type="l", col='black')
+lines(1:100, dchisq(1:100, shapes[3]), col='red')
+lines(1:100, dgamma(1:100, shapes[4]/2, 1/2), type="l", col='black')
+lines(1:100, dchisq(1:100, shapes[4]), col='red')
+legend("topright", legend=c("Gamma distribution", "Chi-square distribution"), fill=c("black", "red"))
+```
+
+```{r echo=TRUE}
+print(paste("The 5% quantile for Gamma(3,3) is found at ", qgamma(0.05,3,3)))
+print(paste("The 95% quantile for Gamma(3,3) is found at ", qgamma(0.95,3,3)))
+```
 
 ## Exercise 4
+
+* **Generate n=1000 values from a Beta(5,2) and compute the sample mean and the sample variance.**
 
 #TODO
 
 ## Exercise 5
 
+* **Analogously, show with a simple R function that a negative binomial distribution may be seen as a mixture between a Poisson and a Gamma. In symbols: X|Y∼P(Y), Y∼Gamma(α,β), then X∼….**
+
 #TODO
 
 ## Exercise 6
 
-#TODO
+* **Instead of using the built-in function ecdf(), write your own R function for the empirical cumulative distribution function and reproduce the two plots above.**
+
+```{r echo=TRUE}
+ecdf_custom <- function(t,X)
+{
+  X <- sort(X)
+  out <- numeric(length(X))
+  for(i in 1:length(X)) {
+    indicator <- as.numeric(t<=X[i])
+    out[i] <- sum(indicator)/length(X)
+  }
+  out
+}
+
+set.seed(2)
+par(mfrow=c(2,2))
+n<-50
+y<-rbeta(n, 3,4)
+edf_beta<-ecdf_custom(y, seq(from=0, to=1, by=0.01))
+tt<-seq(from=0, to=1, by=0.01)
+plot(edf_beta, main="ECDF_custom for n=50", type='l')
+edf_beta<-ecdf(y)
+plot(edf_beta, verticals=TRUE, do.p=FALSE, main="ECDF and CDF: n=50")
+lines(tt, pbeta(tt,3,4), col=2, lty=2, lwd=2)
+n2<-500
+y2<-rbeta(n2, 3,4)
+edf_beta2<-ecdf_custom(y2, seq(from=0, to=1, by=0.01))
+plot(edf_beta2, main="ECDF_custom n=500", type='l')
+edf_beta2<-ecdf(y2)
+plot(edf_beta2, verticals=TRUE, do.p=FALSE, main="ECDF and CDF: n=500")
+lines(tt, pbeta(tt,3,4), col=2, lty=2, lwd=2)
+```
 
 ## Exercise 7
+
+**Compare in R the assumption of normality for these samples:**
+
+* **y1,…,y100∼tν, with ν=5,20,100. What does it happens when the number of degrees of freedom ν increases?**
+* **y1,…,y100∼Cauchy(0,1). Do you note something weird for the extremes quantiles?**
 
 #TODO
 
 ## Exercise 8
+
+* **Write a general R function for checking the validity of the central limit theorem. Hint The function will consist of two parameters: clt_function <- function(n, distr), where the first one is the sampe size and the second one is the kind of distribution from which you generate. Use plots for visualizing the results.**
 
 #TODO
