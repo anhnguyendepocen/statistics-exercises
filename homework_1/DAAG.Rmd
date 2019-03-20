@@ -11,32 +11,136 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Exercise 4
 
-#TODO
+**For the data frame possum (DAAG package)**
+
+**(a) Use the function str() to get information on each of the columns.**
+
+**(b) Using the function complete.cases(), determine the rows in which one or more values is missing. Print those rows. In which columns do the missing values appear?**
+
+(a)
+```{r echo=TRUE}
+library(DAAG)
+for (col in names(possum))
+{
+  str(possum[col])
+}
+```
+
+(b) There are two missing values in `age` and a missing value in `footlgth`.
+```{r echo=TRUE}
+library(DAAG)
+possum[!complete.cases(possum),]
+```
 
 ## Exercise 6
+
+**Create a data frame called Manitoba.lakes that contains the lake’s elevation (in meters above sea level) and area (in square kilometers) as listed below. Assign the names of the lakes using the row.names() function.**
 
 #TODO
 
 ## Exercise 11
 
+**Run the following code:**
+```
+gender <- factor(c(rep("female", 91), rep("male", 92)))
+table(gender)
+gender <- factor(gender, levels=c("male", "female"))
+table(gender)40
+gender <- factor(gender, levels=c("Male", "female")) # Note the mistake: "Male" should be "male"
+table(gender)
+table(gender, exclude=NULL)
+rm(gender) # Remove gender
+```
+**Explain the output from the successive uses of table().**
+
 #TODO
 
 ## Exercise 12
 
-#TODO
+**Write a function that calculates the proportion of values in a vector x that exceed some value cutoff.**
+
+**(a) Use the sequence of numbers **$1, 2, \dots , 100$ **to check that this function gives the result that is expected.**
+
+**(b) Obtain the vector ex01.36 from the Devore6 (or Devore7) package. These data give the times required for individuals to escape from an oil platform during a drill. Use dotplot() to show the distribution of times. Calculate the proportion of escape times that exceed 7 minutes.**
+
+(a)
+```{r echo=TRUE}
+exceed_prop <- function(X, cutoff)
+{
+  return(length(X[X > cutoff])/length(X))
+}
+sequence <- c(1:100)
+print(paste("Higher than 0:", exceed_prop(sequence, 0)))
+print(paste("Higher than 50:", exceed_prop(sequence, 50)))
+print(paste("Higher than 70:", exceed_prop(sequence, 70)))
+print(paste("Higher than 100:", exceed_prop(sequence, 100)))
+```
+
+
+(b) We assume that the times contained in the vector are expressed in seconds.
+
+
+```{r echo=TRUE}
+library(Devore7)
+exceed_prop <- function(X, cutoff)
+{
+  return(length(X[X > cutoff])/length(X))
+}
+dotplot(ex01.36$C1)
+print(paste("Proportion above 7 minutes:", exceed_prop(ex01.36$C1, 7 * 60)))
+```
 
 ## Exercise 13
+
+**The following plots four different transformations of the Animals data from the MASS package. What different aspects of the data do these different graphs emphasize? Consider the effect on low values of the variables, as contrasted with the effect on high values.**
+```
+par(mfrow=c(2,2)) # 2 by 2 layout on the page
+library(MASS) # Animals is in the MASS package
+plot(brain  ̃ body, data=Animals)
+plot(sqrt(brain)  ̃ sqrt(body), data=Animals)
+plot(I(brainˆ0.1)  ̃ I(bodyˆ0.1), data=Animals) # I() forces its argument to be treated "as is"
+plot(log(brain)  ̃ log(body), data=Animals)
+par(mfrow=c(1,1)) # Restore to 1 figure per page
+```
 
 #TODO
 
 ## Exercise 15
 
+**The data frame socsupport (DAAG) has data from a survey on social and other kinds of support, for a group of university students. It includes Beck Depression Inventory (BDI) scores. The following are two alternative plots of BDI against age:**
+```
+plot(BDI  ̃ age, data=socsupport)
+plot(BDI  ̃ unclass(age), data=socsupport)
+```
+**For examination of cases where the score seems very high, which plot is more useful? Explain.**
+
+**Why is it necessary to be cautious in making anything of the plots for students in the three oldest age categories (25-30, 31-40, 40+)?**
+
 #TODO
 
 ## Exercise 17
 
-#TODO
+**Given a vector x, the following demonstrates alternative ways to create a vector of numbers from 1 through n, where n is the length of the vector:**
+```
+x <- c(8, 54, 534, 1630, 6611)
+seq(1, length(x))
+seq(along=x)
+```
+**Now set x <- NULL and repeat each of the calculations seq(1, length(x)) and seq(along=x). Which version of the calculation should be used in order to return a vector of length 0 in the event that the supplied argument is NULL.**
+
+```{r echo=TRUE}
+x <- c(8, 54, 534, 1630, 6611)
+seq(1, length(x))
+seq(along=x)
+x <- NULL
+seq(1, length(x))
+seq(along=x)
+```
+
+The second version of the calculation, `seq(along=x)`, should be used in case that the supplied argument is NULL, since the first index (1) of the first version will lead to a descending vector from 1 to 0 instead of the expected result of a vector of length 0.
 
 ## Exercise 20
+
+**The help page for iris (type help(iris)) gives code that converts the data in iris3 (datasets package) to case-by-variable format, with column names “Sepal.Length”, “Sepal.Width”, “Petal.Length”, “Petal.Width”, and “Species”. Look up the help pages for the functions that are used, and make sure that you understand them. Then add annotation to this code that explains each step in the computation.**
 
 #TODO
