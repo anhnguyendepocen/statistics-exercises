@@ -96,17 +96,18 @@ d. In the following graph we can see five examples of Poisson distribution with 
 
 ``` {r echo=TRUE}
 lambda <- c(5, 10, 25, 50, 100)
-plot(0:130, dpois(0:130, lambda[1]), xlim=c(0,130), ylim=c(0,0.2), type='l', xlab=expression(lambda), ylab="f(x)", main=expression(paste("Some examples of normal approximations to the Poisson distribution w.r.t.",lambda)))
-lines(0:130, dpois(0:130, lambda[2]), col='green')
+plot(0:130, dpois(0:130, lambda[1]), xlim=c(0,130), ylim=c(0,0.2), type='l', xlab=expression(lambda), ylab="f(x)", col='red', main=expression(paste("Some examples of normal approximations to the Poisson distribution w.r.t.",lambda)))
+lines(0:130, dpois(0:130, lambda[2]), col='red')
 lines(0:130, dpois(0:130, lambda[3]), col='red')
-lines(0:130, dpois(0:130, lambda[4]), col='blue')
-lines(0:130, dpois(0:130, lambda[5]), col='purple')
+lines(0:130, dpois(0:130, lambda[4]), col='red')
+lines(0:130, dpois(0:130, lambda[5]), col='red')
 
-lines(0:130, dnorm(0:130, lambda[1], sqrt(lambda[1])), col='orange')
-lines(0:130, dnorm(0:130, lambda[2], sqrt(lambda[2])), col='orange')
-lines(0:130, dnorm(0:130, lambda[3], sqrt(lambda[3])), col='orange')
-lines(0:130, dnorm(0:130, lambda[4], sqrt(lambda[4])), col='orange')
-lines(0:130, dnorm(0:130, lambda[5], sqrt(lambda[5])), col='orange')
+lines(0:130, dnorm(0:130, lambda[1], sqrt(lambda[1])), type='h', col='black')
+lines(0:130, dnorm(0:130, lambda[2], sqrt(lambda[2])), type='h', col='black')
+lines(0:130, dnorm(0:130, lambda[3], sqrt(lambda[3])), type='h', col='black')
+lines(0:130, dnorm(0:130, lambda[4], sqrt(lambda[4])), type='h', col='black')
+lines(0:130, dnorm(0:130, lambda[5], sqrt(lambda[5])), type='h', col='black')
+legend("topright", legend=c("Poisson distribution", "Normal distribution"), fill=c("red", "black"))
 ```
 
 In the following graph, we plot the sum of pointwise distances between Poisson distributions and their respective normal approximations for $0 < \lambda < 50$. As we expected from our computations and our previous graph, the error decreases when $\lambda$ increases.

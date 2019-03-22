@@ -2,6 +2,7 @@
 .Rapp.history
 .RData
 .Rproj.user/
+.html
 /*_cache/
 /cache/
 *.utf8.md

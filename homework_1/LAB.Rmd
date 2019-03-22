@@ -33,13 +33,13 @@ From the following plot we can see that the $\chi^2_n$ and the $\gamma(\frac{n}{
 
 ```{r echo=TRUE}
 shapes <- c(5, 10, 25, 50)
-plot(1:100, dgamma(1:100, shapes[1]/2, 1/2), type="l", col='black', xlab="x", ylab="f(x)", main="Comparison between Gamma and Chi-square distributions")
+plot(1:100, dgamma(1:100, shapes[1]/2, 1/2), type="h", col='black', xlab="x", ylab="f(x)", main="Comparison between Gamma and Chi-square distributions")
 lines(1:100, dchisq(1:100, shapes[1]), col='red')
-lines(1:100, dgamma(1:100, shapes[2]/2, 1/2), type="l", col='black')
+lines(1:100, dgamma(1:100, shapes[2]/2, 1/2), type="h", col='black')
 lines(1:100, dchisq(1:100, shapes[2]), col='red')
-lines(1:100, dgamma(1:100, shapes[3]/2, 1/2), type="l", col='black')
+lines(1:100, dgamma(1:100, shapes[3]/2, 1/2), type="h", col='black')
 lines(1:100, dchisq(1:100, shapes[3]), col='red')
-lines(1:100, dgamma(1:100, shapes[4]/2, 1/2), type="l", col='black')
+lines(1:100, dgamma(1:100, shapes[4]/2, 1/2), type="h", col='black')
 lines(1:100, dchisq(1:100, shapes[4]), col='red')
 legend("topright", legend=c("Gamma distribution", "Chi-square distribution"), fill=c("black", "red"))
 ```
