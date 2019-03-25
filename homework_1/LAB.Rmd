@@ -15,13 +15,50 @@ knitr::opts_chunk$set(echo = TRUE)
 
 * **Plot two binomials with n=20, and p=0.3,0.6 respectively.**
 
-#TODO
+```{r echo=TRUE}
+binomial <- function(x,n,p){
+    
+    return(choose(n,x) * (p^x) * (1-p)^(n-x))
+}
+all.equal(binomial(2,5,0.2), dbinom(2,5,0.2)) # Test with some prespecified values.
+```
+
+```{r echo=TRUE}
+#graphical setting for margins and type of points
+par(mfrow=c(1,2),mar=c(5,4,2,1), oma=c(0,0.2,0.2,0), pty="s", pch = 16)
+#plot the binomial distributions with different input
+plot(0:20, binomial(0:20, 20, 0.3), 
+     xlab = "x", ylab = "f(x)", cex.lab=1, main="p=0.3", cex.main=1)
+plot(0:20, binomial(0:20, 20, 0.6), xlab ="x", ylab = "f(x)",
+      cex.lab=1, main= "p=0.6", cex.main=1)
+```
 
 ## Exercise 2
 
 * **Generate in R the same output, but using rgeom() for generating the random variables. Hint: generate n times three geometric distribution X1,…,X3 with p=0.08, store them in a matrix and compute then the sum Y.**
 
-#TODO
+```{r ex2lab, echo=TRUE}
+set.seed(2019)
+
+# Matrix with geometric distributions:
+n <- 10000
+prob <- 0.08
+
+Xmatrix = matrix(nrow=n, ncol=3)
+
+# Each column corresponds to X1, X2 and X3:
+for (i in 1:3)
+{
+  Xmatrix[,i]=c(rgeom(n,prob))
+}
+
+# Y=X1+X2+X3:
+Y=c(rowSums(Xmatrix))
+
+# Graph:
+plot(density(Y), type = "p", col = "black", lwd = 1, pch=20, 
+xlab="Y=number of failures before k successes", ylab="f(x)", main="")
+```
 
 ## Exercise 3
 
@@ -53,13 +90,57 @@ print(paste("The 95% quantile for Gamma(3,3) is found at ", qgamma(0.95,3,3)))
 
 * **Generate n=1000 values from a Beta(5,2) and compute the sample mean and the sample variance.**
 
-#TODO
+```{r echo=TRUE}
+sample <- rbeta(1000, 5, 2) 
+
+mean <- mean(sample) # Sample mean.
+sprintf("Sample mean: %s", mean)
+
+variance <- var(sample) # Sample variance.
+sprintf("Sample variance: %s", variance)
+```
 
 ## Exercise 5
 
 * **Analogously, show with a simple R function that a negative binomial distribution may be seen as a mixture between a Poisson and a Gamma. In symbols: X|Y∼P(Y), Y∼Gamma(α,β), then X∼….**
 
-#TODO
+```{r ex5lab, echo=TRUE}
+
+set.seed(2019)
+
+# Mixture of Poisson and Gamma distributions:
+mixture <- function(df, n)
+{  
+  Lambda = rgamma(n, df, df)
+  X = rpois(n, Lambda)
+  return(X)  
+}
+
+df <- 5
+n <- 100000
+
+# Plot of the mixture distribution - PoissonGamma - in black:
+PoissonGamma <- mixture(df,n)
+plot( density(PoissonGamma), col="black", lwd=1, 
+main="Negative Binomial distribution as a Poisson-Gamma mixture")
+
+# Negative Binomial distribution superposition - in red:
+Nbinom <- c(rnbinom(n, size=df, prob=df/(df+1)))
+lines( density(Nbinom), col="red", lwd=2 )
+
+# Comparison between the mean and variance:
+
+# Mean PoissonGamma:
+mean(PoissonGamma)
+# Mean Negative Binomial:
+mean(Nbinom)
+
+# Variance PoissonGamma:
+var(PoissonGamma)
+# Variance Negative Binomial:
+var(Nbinom)
+
+```
 
 ## Exercise 6
 
@@ -103,10 +184,90 @@ lines(tt, pbeta(tt,3,4), col=2, lty=2, lwd=2)
 * **y1,…,y100∼tν, with ν=5,20,100. What does it happens when the number of degrees of freedom ν increases?**
 * **y1,…,y100∼Cauchy(0,1). Do you note something weird for the extremes quantiles?**
 
-#TODO
+```{r echo=TRUE}
+sample1 <- rt(100, 5)
+sample2 <- rt(100, 20)
+sample3 <- rt(100, 100)
+
+par(mfrow = c(2,2))
+
+# Plotting sample 1 (degrees of freedom = 5)
+qqplot(qt(ppoints(100), 5), sample1,
+      xlab = "True quantiles", ylab = "Sample quantiles",
+      main = "Q-Q plot for t(5)")
+qqline(sample1, distribution = function(p) qnorm(p, mean(sample1), sd(sample1)), col = 2)
+       
+# Plotting sample 2 (degrees of freedom = 20)
+qqplot(qt(ppoints(100), 20), sample2,
+      xlab = "True quantiles", ylab = "Sample quantiles",
+      main = "Q-Q plot for t(20)")
+qqline(sample2, distribution = function(p) qnorm(p, mean(sample2), sd(sample2)), col = 2)
+       
+# Plotting sample 3 (degrees of freedom = 100)
+qqplot(qt(ppoints(100), 100), sample1,
+      xlab = "True quantiles", ylab = "Sample quantiles",
+      main = "Q-Q plot for t(100)")
+qqline(sample3, distribution = function(p) qnorm(p, mean(sample3), sd(sample3)), col = 2)
+```
+
+By increasing the degrees of freedom, we get closer to the normal distribution. 
+
+```{r echo=TRUE}
+# Cauchy
+par(mfrow = c(2,2))
+n = 100
+sample <- rcauchy(n, 0, 1)
+qqplot(qt(ppoints(n), 10), sample,
+      xlab = "True quantiles", ylab = "Sample quantiles")
+qqline(sample, distribution = function(p) qnorm(p, mean(sample), sd(sample)), col = 2)
+```
 
 ## Exercise 8
 
 * **Write a general R function for checking the validity of the central limit theorem. Hint The function will consist of two parameters: clt_function <- function(n, distr), where the first one is the sampe size and the second one is the kind of distribution from which you generate. Use plots for visualizing the results.**
 
-#TODO
+```{r ex8lab, echo=TRUE}
+clt_function <- function(n, src.dist = NULL, param1 = NULL, param2 = NULL)
+  {
+  
+  r <- 10000  # Number of samples
+  
+  # matrix r x n. Each row is considered one sample:
+  samples <- switch( src.dist,
+                     "ChiSqrt"     = matrix( rchisq( n*r,param1 ),r ),
+                     "Exponential" = matrix( rexp( n*r,param1 ),r ),
+                     "Gamma"       = matrix( rgamma( n*r,param1,param2 ),r ),
+                     "Normal"      = matrix( rnorm( n*r,param1,param2 ),r ),
+                     "Poisson"     = matrix( rpois( n*r,param1 ),r ), 
+                     "Uniform"     = matrix( runif( n*r,param1,param2 ),r )	
+                    )
+  
+  means_of_samples <- apply( samples, 1, mean )
+  
+  # Distribution:
+  plot( density( means_of_samples ), col = "black", lwd = 1, 
+        main = c( "Central Limit Theorem", src.dist, n ))
+  
+  # Gaussian:
+  sigma <- sd  ( means_of_samples )
+  mu    <- mean( means_of_samples )
+  curve( dnorm(x, mu, sigma), add = TRUE, col="red", lwd=2 ) 
+  
+}
+
+# Example 1 parameter - Poisson distribution
+par(mfrow=c(2,2))
+for (i in c(1,5,10,100))
+{
+   clt_function(i,src.dist="Poisson",param1=1)
+}
+
+# Example 2 parameters - Uniform distribution
+for (i in c(1,5,10,100))
+{
+    clt_function(i,src.dist="Uniform",param1=1, param2=2)
+}
+
+```
+
+Analysing the graphs we can easily note that the distributions tend to a Gaussian with the increase of the sample size.

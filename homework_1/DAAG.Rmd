@@ -36,7 +36,45 @@ possum[!complete.cases(possum),]
 
 **Create a data frame called Manitoba.lakes that contains the lake’s elevation (in meters above sea level) and area (in square kilometers) as listed below. Assign the names of the lakes using the row.names() function.**
 
-#TODO
+```{r echo=TRUE}
+lakes <- c("Winnipeg", "Winnipegosis", "Manitoba", "SouthernIndian", "Cedar", "Island", "Gods", "Cross", "Playgreen")
+elevation <- c(217, 254, 248, 254, 253, 227, 178, 207, 217)
+area <- c(24387, 5374, 4624, 2247, 1353, 1223, 1151, 755, 657)
+
+#create data frame
+Manitoba.lakes <- data.frame(elevation, area)
+
+#assigning names
+row.names(Manitoba.lakes) = lakes
+```
+
+```{r echo=TRUE}
+Manitoba.lakes
+```
+
+**a) Use the following code to plotlog2 (area)versus elevation, adding labeling information (there is an extreme value of area that makes a logarithmic scale pretty much essential).**
+
+```{r echo=TRUE}
+attach(Manitoba.lakes)
+plot(log2(area) ~ elevation, pch=16, xlim=c(170,280))
+    #NB: Doubling the area increases log2(area) by 1.0
+text(log2(area) ~ elevation, labels=row.names(Manitoba.lakes), pos=4)
+text(log2(area) ~ elevation, labels=area, pos=2)
+title("Manitoba's Largest Lakes")
+detach(Manitoba.lakes)
+```
+
+**b) Repeat the plot and associated labeling, now plotting area versus elevation, but specifying log="y"in order to obtain a logarithmic y-scale.**
+
+```{r echo=TRUE}
+attach(Manitoba.lakes)
+plot(area ~ elevation, log="y", pch=16, xlim=c(170,280))
+    #NB: Doubling the area increases log2(area) by 1.0
+text(area ~ elevation, labels=row.names(Manitoba.lakes), pos=4)
+text(area ~ elevation, labels=area, pos=2)
+title("Manitoba's Largest Lakes")
+detach(Manitoba.lakes)
+```
 
 ## Exercise 11
 
@@ -53,7 +91,15 @@ rm(gender) # Remove gender
 ```
 **Explain the output from the successive uses of table().**
 
-#TODO
+At first a vector named 'gender' was constructed with two categories: 'male' and 'female'.
+
+   (#1) The first table() returns the number of males and females as defined in the assignement of 'gender'.
+   
+   (#2) The second table() returns the same as the previous one, but this time the vector was redefined to be the levels of 'male' and 'female' of vector 'gender'.
+   
+   (#3) The third table() will not return the results for 'male' because of the typo ('Male' instead of 'male') when redefining the vector 'gender'. In this case the vector will have only 'female' and '<NA>', so the table() will return 0 Male.
+   
+   (#4) Finally, when we type 'table(gender, exclude=NULL)' it will return the amount correspondent to 'Male', 'female', and '<NA>', as discussed previously.
 
 ## Exercise 12
 
@@ -61,9 +107,6 @@ rm(gender) # Remove gender
 
 **(a) Use the sequence of numbers **$1, 2, \dots , 100$ **to check that this function gives the result that is expected.**
 
-**(b) Obtain the vector ex01.36 from the Devore6 (or Devore7) package. These data give the times required for individuals to escape from an oil platform during a drill. Use dotplot() to show the distribution of times. Calculate the proportion of escape times that exceed 7 minutes.**
-
-(a)
 ```{r echo=TRUE}
 exceed_prop <- function(X, cutoff)
 {
@@ -76,8 +119,9 @@ print(paste("Higher than 70:", exceed_prop(sequence, 70)))
 print(paste("Higher than 100:", exceed_prop(sequence, 100)))
 ```
 
+**(b) Obtain the vector ex01.36 from the Devore6 (or Devore7) package. These data give the times required for individuals to escape from an oil platform during a drill. Use dotplot() to show the distribution of times. Calculate the proportion of escape times that exceed 7 minutes.**
 
-(b) We assume that the times contained in the vector are expressed in seconds.
+We assume that the times contained in the vector are expressed in seconds.
 
 
 ```{r echo=TRUE}
@@ -109,14 +153,25 @@ par(mfrow=c(1,1)) # Restore to 1 figure per page
 
 **The data frame socsupport (DAAG) has data from a survey on social and other kinds of support, for a group of university students. It includes Beck Depression Inventory (BDI) scores. The following are two alternative plots of BDI against age:**
 ```
+library(DAAG)
+par(mfrow=c(1,2))
+
 plot(BDI  ̃ age, data=socsupport)
 plot(BDI  ̃ unclass(age), data=socsupport)
 ```
 **For examination of cases where the score seems very high, which plot is more useful? Explain.**
 
+In cases where the score seems very high the most useful plot is the first one $plot(BDI \sim age, data=socsupport)$ because the outliars apear explicitly.
+
 **Why is it necessary to be cautious in making anything of the plots for students in the three oldest age categories (25-30, 31-40, 40+)?**
 
-#TODO
+We need to be cautious because the number of students in these categories is very low to make inferences.
+
+```{r, echo=TRUE}
+library(DAAG)
+data = socsupport 
+table(data$age)
+```
 
 ## Exercise 17
 
@@ -143,4 +198,25 @@ The second version of the calculation, `seq(along=x)`, should be used in case th
 
 **The help page for iris (type help(iris)) gives code that converts the data in iris3 (datasets package) to case-by-variable format, with column names “Sepal.Length”, “Sepal.Width”, “Petal.Length”, “Petal.Width”, and “Species”. Look up the help pages for the functions that are used, and make sure that you understand them. Then add annotation to this code that explains each step in the computation.**
 
-#TODO
+```{r echo=TRUE}
+help(iris)
+```
+
+iris is a data frame with 150 cases (rows) and 5 variables (columns) named Sepal.Length, Sepal.Width, Petal.Length, Petal.Width, and Species.
+
+iris3 gives the same data arranged as a 3-dimensional array of size 50 by 4 by 3, as represented by S-PLUS. The first dimension gives the case number within the species subsample, the second the measurements with names Sepal L., Sepal W., Petal L., and Petal W., and the third the species.
+
+```{r echo=TRUE}
+dni3 <- dimnames(iris3) # To obtain dimension names of iris3 dataset. Output:
+# 1.NULL
+# 2. 'Sepal L.' 'Sepal W.' 'Petal L.' 'Petal W.'
+# 3. 'Setosa' 'Versicolor' 'Virginica'
+
+# To create new dataframe. Function 'aperm' is used to transpose an array by 
+# permuting its dimensions and optionally resizing it.
+ii <- data.frame(matrix(aperm(iris3, c(1,3,2)), ncol = 4,
+                        dimnames = list(NULL, sub(" L.",".Length",
+                                        sub(" W.",".Width", dni3[[2]])))), # To obtain names of variables from dni3 
+    Species = gl(3, 50, labels = sub("S", "s", sub("V", "v", dni3[[3]]))))
+all.equal(ii, iris) # Checks if new dataframe elements are equal to original iris dataframe. Output is 'TRUE'.
+```
