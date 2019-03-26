@@ -15,41 +15,41 @@ knitr::opts_chunk$set(echo = TRUE)
 
 **1. Find the c.d.f. and the quantile function for $X$.**
 
-**2. Find $Pr(X < \lambda)$ and the median of $X$**
-
-**3. Find the mean and variance of $X$**
-
-1. The Cumulative Probability Function, P(x), of a random variable x expresses the probability that x does not exceed the value x, as a function of x. $F(x)=P(X \leq x)$ $\forall x$.
+The cumulative probability function $P(x)$ of a random variable $x$ expresses the probability that x does not exceed the value $x$, as a function of x. $F(x)=P(X \leq x)$ $\forall x$.
 
 In the case of an Exponential distribution, we have the following: $F(x) = \int_{-\infty}^{x} f(x)dx = 1-exp(-\lambda x)$  for $x \geq 0$, 0 otherwise.
 
-If we have x = 0, so the probability will be $1-exp(-\lambda.0)=0$, as expected.
+If we have $x = 0$, so the probability will be $1-exp(-\lambda.0)=0$, as expected.
 
 For the p-th quantile, we will have the following expression:
 
-$$p = 1-exp(-\lambda x)$$
-$$1-p=exp(-\lambda x)$$
+$$p = 1-\exp(-\lambda x)$$
+$$1-p=\exp(-\lambda x)$$
 $$x=\frac{-ln(1-p)}{\lambda} $$
-So, it means that if x = 0 we have p = 0.
+So, it means that if $x = 0$ we have $p = 0$.
 
-2. As discussed previously:
+**2. Find $Pr(X < \lambda)$ and the median of $X$**
+
+As discussed previously:
 
 $$P(x < \lambda)= \int_{-\infty}^{\lambda} f(x)dx = 1-exp(-\lambda^2)$$
 The median will be given by p = 0.5, so:
 
-$$ median=-\frac{ln(1-0.5)}{\lambda}=-\frac{ln(0.5)}{\lambda}$$
+$$ \mbox{median}=-\frac{\ln(1-0.5)}{\lambda}=-\frac{\ln(0.5)}{\lambda}$$
 
-3. The mean will be given by:
+**3. Find the mean and variance of $X$**
 
-$$ mean=E[x]=\int_{0}^{\infty} x \lambda exp(-\lambda x)dx$$
-$$ \lambda\bigg[\frac{-x exp(-\lambda x)}{\lambda}\bigg|_{0}^{\infty}+ \frac{1}{\lambda} \int_{0}^{\infty} exp(-\lambda x)dx\bigg]$$
-$$ \lambda \bigg[ {0  + \frac{1}{\lambda} - \frac{exp(-\lambda x)}{\lambda} \bigg| _{0}^{\infty}} \bigg] = \lambda \frac{1}{\lambda^2}$$
-$$mean=\frac{1}{\lambda}$$
+The mean will be given by:
+
+$$ \mbox{mean}=E[x]=\int_{0}^{\infty} x \lambda \exp(-\lambda x)dx$$
+$$ \lambda\bigg[\frac{-x \exp(-\lambda x)}{\lambda}\bigg|_{0}^{\infty}+ \frac{1}{\lambda} \int_{0}^{\infty} \exp(-\lambda x)dx\bigg]$$
+$$ \lambda \bigg[ {0  + \frac{1}{\lambda} - \frac{\exp(-\lambda x)}{\lambda} \bigg| _{0}^{\infty}} \bigg] = \lambda \frac{1}{\lambda^2}$$
+$$\mbox{mean}=\frac{1}{\lambda}$$
 And the variance:
-$$  Var(x)=E[x^2]-E[x]^2$$
-$$E[x^2]=\int_{0}^{\infty} x^2 \lambda exp(-\lambda x)dx=\frac{2}{\lambda^2}$$
-$$Var(x)= \frac{2}{\lambda^2} - \frac{1}{\lambda^2}$$
-$$variance=\frac{1}{\lambda^2}$$
+$$  \mbox{Var}(x)=\mbox{E}[x^2]-\mbox{E}[x]^2$$
+$$\mbox{E}[x^2]=\int_{0}^{\infty} x^2 \lambda \exp(-\lambda x)dx=\frac{2}{\lambda^2}$$
+$$\mbox{Var}(x)= \frac{2}{\lambda^2} - \frac{1}{\lambda^2}$$
+$$\mbox{variance}=\frac{1}{\lambda^2}$$
 
 ## Exercise 1.2
 
@@ -67,11 +67,11 @@ Thus, we can consider 0 as the lower bound $a$ of the first equation and, by def
 
 $$
 \begin{aligned}
-Pr(X < 0.5, Y < 0.5) &= \int_{0}^{0.5}\int_{0}^{0.5} f(x,y) \,dx\,dy \\
-&= \int_{0}^{0.5}\int_{0}^{0.5} x+\frac{3}{2}y^2 \,dx\,dy \\
-&= \int_{0}^{0.5}[\frac{1}{2}x^2+\frac{3}{2}y^2x]_{x=0}^{x=0.5}\,dy \\
-&= \int_{0}^{0.5}\frac{1}{8}+\frac{3}{4}y^2\,dy \\
-&= [\frac{1}{8}y+\frac{1}{4}y^3]_{y=0}^{y=0.5} \\
+Pr(X < 0.5, Y < 0.5) &= \int_{0}^{0.5}\int_{0}^{0.5} f(x,y) \,dx\,dy \\[5pt]
+&= \int_{0}^{0.5}\int_{0}^{0.5} x+\frac{3}{2}y^2 \,dx\,dy \\[5pt]
+&= \int_{0}^{0.5}[\frac{1}{2}x^2+\frac{3}{2}y^2x]_{x=0}^{x=0.5}\,dy \\[5pt]
+&= \int_{0}^{0.5}\frac{1}{8}+\frac{3}{4}y^2\,dy \\[5pt]
+&= [\frac{1}{8}y+\frac{1}{4}y^3]_{y=0}^{y=0.5} \\[5pt]
 &= \frac{1}{16} + \frac{1}{32} = \frac{3}{32} = 0.09357
 \end{aligned}
 $$
@@ -80,54 +80,47 @@ $$
 
 **Let $X$ and $Y$ be non-independent random variables, such that $var(X) = \sigma^2_x,\; var(Y) = \sigma^2_y$ and $cov(X,Y) = \sigma^2_{xy}$. Using the result from Section 1.6.2 find $var(X + Y)$ and $var(X-Y)$.**
 
-$$Var(X+Y)= $$
-
-$$ = E [((X+Y) - E[(X+Y)])^{2}]$$
-
-$$ = E [(X+Y)^{2}] - [E(X+Y)]^{2}$$
-
-$$ = E [X^{2} + 2XY + Y^{2}] - [E(X)+E(Y)]^{2}$$
-
-$$ = E (X^{2}) + 2E(XY) + E(Y^{2} - [E(X)^{2} - 2E(X)E(Y) + E(Y)^{2}]$$
-
-$$ = E (X)^{2} + 2E(XY) + E(Y)^{2} - [E(Y)]^{2} + 2[E(XY) - E(X)E(Y)]$$
-
-$$ = Var(X) + Var(Y) + 2[E(XY)-E(X)E(Y)]$$
-
-$$Cov(X,Y) = E(XY) - E(X)E(Y)$$
-
-$$Var(X+Y) = Var(X) + Var(Y) + 2Cov(X,Y)$$
+$$
+\begin{align}
+\mbox{Var}(X+Y) &= E [((X+Y) - E[(X+Y)])^{2}] \\[5pt]
+&= E[(X+Y)^{2}] - [E(X+Y)]^{2} \\[5pt]
+&= E[X^{2} + 2XY + Y^{2}] - [E(X)+E(Y)]^{2} \\[5pt]
+&= E(X^{2}) + 2E(XY) + E(Y^{2} - [E(X)^{2} - 2E(X)E(Y) + E(Y)^{2}] \\[5pt]
+&= E(X)^{2} + 2E(XY) + E(Y)^{2} - [E(Y)]^{2} + 2[E(XY) - E(X)E(Y)] \\[5pt]
+&= \mbox{Var}(X) + \mbox{Var}(Y) + 2[E(XY)-E(X)E(Y)] \\[5pt]
+&= \mbox{Cov}(X,Y) = E(XY) - E(X)E(Y) \\[5pt]
+&= \mbox{Var}(X+Y) = \mbox{Var}(X) + \mbox{Var}(Y) + 2\,\mbox{Cov}(X,Y)
+\end{align}
+$$
 
 Using: 
 
-$Var(X) = \sigma^{2}_{x}$,
-$Var(Y) = \sigma^{2}_{y}$,
-$Cov(X,Y) = \sigma^{2}_{xy}$
+$\mbox{Var}(X) = \sigma^{2}_{x}$, $\mbox{Var}(Y) = \sigma^{2}_{y}$, $\mbox{Cov}(X,Y) = \sigma^{2}_{xy}$
 
 we have:
 
-$$Var(X+Y)= \sigma^{2}_{x} + \sigma^{2}_{y} + 2\sigma^{2}_{xy}$$
+$$\mbox{Var}(X+Y)= \sigma^{2}_{x} + \sigma^{2}_{y} + 2\sigma^{2}_{xy}$$
 
 Similarly, we have:
 
-$$Var(X-Y) = Var(X) + Var(Y) - 2Cov(X,Y)$$
+$$\mbox{Var}(X-Y) = \mbox{Var}(X) + \mbox{Var}(Y) - 2\,\mbox{Cov}(X,Y)$$
 
 And therefore:
 
-$$Var(X+Y)= \sigma^{2}_{x} + \sigma^{2}_{y} - 2\sigma^{2}_{xy}$$
+$$\mbox{Var}(X+Y)= \sigma^{2}_{x} + \sigma^{2}_{y} - 2\sigma^{2}_{xy}$$
 
 ## Exercise 1.8
 
 **If $\log(X) \sim N(\mu, \sigma^2)$, find the p.d.f. of X.**
 
 This distribution is known as Lognormal distribution.
-Considering: $ln(X)=Y$; $Y$~$N(\mu,\sigma^2)$
+Considering: $\ln(X)=Y$; $Y \sim N(\mu,\sigma^2)$
 
 We have:
-$$f_Y(Y)=\frac{1}{\sqrt{2 \pi \sigma^2}}exp(-\frac{(Y-\mu)^2}{2 \sigma^2}) $$
+$$f_Y(Y)=\frac{1}{\sqrt{2 \pi \sigma^2}}\exp(-\frac{(Y-\mu)^2}{2 \sigma^2}) $$
 Doing:
 $$X=e^Y=g(Y)$$
-$$Y=ln(X)=g^{-1}(X)$$
+$$Y=\ln(X)=g^{-1}(X)$$
 We get that:
 $$ \frac{dg^{-1}(X)}{dX}=\frac{1}{X}$$
 And the following relation is true:
@@ -136,7 +129,7 @@ or: $f_YdY=f_X(X)dX$
 
 Then, we finally have the p.d.f. of X:
 
-$$f_X(X)= \frac{1}{X\sqrt{2 \pi \sigma^2}}exp(-\frac{(ln(X)-\mu)^2}{2 \sigma^2})$$
+$$f_X(X)= \frac{1}{X\sqrt{2 \pi \sigma^2}}\exp(-\frac{(\ln(X)-\mu)^2}{2 \sigma^2})$$
 
 ## Exercise 1.9
 
@@ -144,13 +137,7 @@ $$f_X(X)= \frac{1}{X\sqrt{2 \pi \sigma^2}}exp(-\frac{(ln(X)-\mu)^2}{2 \sigma^2})
 
 **a. Find the moment generating function for $Y$ (hint: the power series representation of the exponential function is useful).**
 
-**b. If $Y_1 \sim \mbox{Poi}(\lambda_1)$ and independently $Y_2 \sim \mbox{Poi}(\lambda_2)$, deduce the distribution of $Y_1 + Y_2$ , by employing a general property of m.g.f.s.**
-
-**c. Making use of the previous result and the central limit theorem, deduce the normal approximation to the Poisson distribution.**
-
-**d. Confirm the previous result graphically, using R functions dpois , dnorm ,plot or barplot and lines. Confirm that the approximation improves with increasing $\lambda$.**
-
-a. Since the Poisson distribution is discrete and the moment generating function is defined as $M_X(s) = E(e^{sX})$, with $s$ real, we have that:
+Since the Poisson distribution is discrete and the moment generating function is defined as $M_X(s) = E(e^{sX})$, with $s$ real, we have that:
 
 $$
 \begin{aligned}
@@ -162,17 +149,23 @@ Given the power series representation of the exponential function $\sum^\infty_{
 
 $$M_Y(s) = e^{-\lambda}e^{\lambda e^s} = e^{\lambda(e^s - 1)}$$
 
-b. Since $Y_1$ and $Y_2$ are independent random variables, we have that:
+**b. If $Y_1 \sim \mbox{Poi}(\lambda_1)$ and independently $Y_2 \sim \mbox{Poi}(\lambda_2)$, deduce the distribution of $Y_1 + Y_2$ , by employing a general property of m.g.f.s.**
+
+Since $Y_1$ and $Y_2$ are independent random variables, we have that:
 
 $$M_{Y_1 + Y_2}(s) = M_{Y_1}(s)M_{Y_2}(s) = e^{\lambda_1(e^s - 1)}e^{\lambda_2(e^s - 1)} = e^{(\lambda_1 + \lambda_2)(e^s - 1)}$$
 Thus, from its moment generating function we can deduce that $Y_1 + Y_2 \sim \mbox{Pois}(\lambda_1 + \lambda_2)$
 
-c. From the previous point it is evident that if $Y_i \sim \mbox{Pois}(\lambda_i)$ for $i = 1,\dots, n$ are independent and $\lambda = \sum^n_{i=1}\lambda_i$, then $Y = (\sum^n_{i=1}Y_i) \sim \mbox{Pois}(\lambda)$. By applying the Central Limit Theorem, we get:
+**c. Making use of the previous result and the central limit theorem, deduce the normal approximation to the Poisson distribution.**
+
+From the previous point it is evident that if $Y_i \sim \mbox{Pois}(\lambda_i)$ for $i = 1,\dots, n$ are independent and $\lambda = \sum^n_{i=1}\lambda_i$, then $Y = (\sum^n_{i=1}Y_i) \sim \mbox{Pois}(\lambda)$. By applying the Central Limit Theorem, we get:
 
 $$Y \sim N(\mu = \lambda, \sigma^2 = \lambda)$$
 Thus, if $\lambda$ is large the distribution $\mbox{Pois}(\lambda)$ gets approximated well by the distribution $N(\lambda, \lambda)$
 
-d. In the following graph we can see five examples of Poisson distribution with growing values of $\lambda$ (in color) and their respective normal approximations (in orange). It is evident how approximations are closer to the original distributions for larger values of $\lambda$.
+**d. Confirm the previous result graphically, using R functions dpois , dnorm ,plot or barplot and lines. Confirm that the approximation improves with increasing $\lambda$.**
+
+In the following graph we can see five examples of Poisson distribution with growing values of $\lambda$ (in color) and their respective normal approximations (in orange). It is evident how approximations are closer to the original distributions for larger values of $\lambda$.
 
 ``` {r echo=TRUE}
 lambda <- c(5, 10, 25, 50, 100)

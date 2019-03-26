@@ -13,9 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 * **Write a function binomial(x,n,p) for the binomial distribution above, depending on parameters x,n,p, and test it with some prespecified values. Use the function choose() for the binomial coefficient.**
 
-* **Plot two binomials with n=20, and p=0.3,0.6 respectively.**
-
-```{r echo=TRUE}
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
 binomial <- function(x,n,p){
     
     return(choose(n,x) * (p^x) * (1-p)^(n-x))
@@ -23,7 +21,9 @@ binomial <- function(x,n,p){
 all.equal(binomial(2,5,0.2), dbinom(2,5,0.2)) # Test with some prespecified values.
 ```
 
-```{r echo=TRUE}
+* **Plot two binomials with n=20, and p=0.3,0.6 respectively.**
+
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
 #graphical setting for margins and type of points
 par(mfrow=c(1,2),mar=c(5,4,2,1), oma=c(0,0.2,0.2,0), pty="s", pch = 16)
 #plot the binomial distributions with different input
@@ -37,7 +37,7 @@ plot(0:20, binomial(0:20, 20, 0.6), xlab ="x", ylab = "f(x)",
 
 * **Generate in R the same output, but using rgeom() for generating the random variables. Hint: generate n times three geometric distribution X1,…,X3 with p=0.08, store them in a matrix and compute then the sum Y.**
 
-```{r ex2lab, echo=TRUE}
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
 set.seed(2019)
 
 # Matrix with geometric distributions:
@@ -68,7 +68,7 @@ xlab="Y=number of failures before k successes", ylab="f(x)", main="")
 
 From the following plot we can see that the $\chi^2_n$ and the $\gamma(\frac{n}{2},\frac{1}{2})$ distributions coincide.
 
-```{r echo=TRUE}
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
 shapes <- c(5, 10, 25, 50)
 plot(1:100, dgamma(1:100, shapes[1]/2, 1/2), type="h", col='black', xlab="x", ylab="f(x)", main="Comparison between Gamma and Chi-square distributions")
 lines(1:100, dchisq(1:100, shapes[1]), col='red')
@@ -81,7 +81,7 @@ lines(1:100, dchisq(1:100, shapes[4]), col='red')
 legend("topright", legend=c("Gamma distribution", "Chi-square distribution"), fill=c("black", "red"))
 ```
 
-```{r echo=TRUE}
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
 print(paste("The 5% quantile for Gamma(3,3) is found at ", qgamma(0.05,3,3)))
 print(paste("The 95% quantile for Gamma(3,3) is found at ", qgamma(0.95,3,3)))
 ```
@@ -90,7 +90,7 @@ print(paste("The 95% quantile for Gamma(3,3) is found at ", qgamma(0.95,3,3)))
 
 * **Generate n=1000 values from a Beta(5,2) and compute the sample mean and the sample variance.**
 
-```{r echo=TRUE}
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
 sample <- rbeta(1000, 5, 2) 
 
 mean <- mean(sample) # Sample mean.
@@ -104,7 +104,7 @@ sprintf("Sample variance: %s", variance)
 
 * **Analogously, show with a simple R function that a negative binomial distribution may be seen as a mixture between a Poisson and a Gamma. In symbols: X|Y∼P(Y), Y∼Gamma(α,β), then X∼….**
 
-```{r ex5lab, echo=TRUE}
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
 
 set.seed(2019)
 
@@ -146,7 +146,7 @@ var(Nbinom)
 
 * **Instead of using the built-in function ecdf(), write your own R function for the empirical cumulative distribution function and reproduce the two plots above.**
 
-```{r echo=TRUE}
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
 ecdf_custom <- function(t,X)
 {
   X <- sort(X)
@@ -162,16 +162,20 @@ set.seed(2)
 par(mfrow=c(2,2))
 n<-50
 y<-rbeta(n, 3,4)
-edf_beta<-ecdf_custom(y, seq(from=0, to=1, by=0.01))
+n2<-500
+y2<-rbeta(n2, 3,4)
 tt<-seq(from=0, to=1, by=0.01)
+
+edf_beta<-ecdf_custom(y, tt)
 plot(edf_beta, main="ECDF_custom for n=50", type='l')
+
 edf_beta<-ecdf(y)
 plot(edf_beta, verticals=TRUE, do.p=FALSE, main="ECDF and CDF: n=50")
 lines(tt, pbeta(tt,3,4), col=2, lty=2, lwd=2)
-n2<-500
-y2<-rbeta(n2, 3,4)
-edf_beta2<-ecdf_custom(y2, seq(from=0, to=1, by=0.01))
+
+edf_beta2<-ecdf_custom(y2, tt)
 plot(edf_beta2, main="ECDF_custom n=500", type='l')
+
 edf_beta2<-ecdf(y2)
 plot(edf_beta2, verticals=TRUE, do.p=FALSE, main="ECDF and CDF: n=500")
 lines(tt, pbeta(tt,3,4), col=2, lty=2, lwd=2)
@@ -184,7 +188,7 @@ lines(tt, pbeta(tt,3,4), col=2, lty=2, lwd=2)
 * **y1,…,y100∼tν, with ν=5,20,100. What does it happens when the number of degrees of freedom ν increases?**
 * **y1,…,y100∼Cauchy(0,1). Do you note something weird for the extremes quantiles?**
 
-```{r echo=TRUE}
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
 sample1 <- rt(100, 5)
 sample2 <- rt(100, 20)
 sample3 <- rt(100, 100)
@@ -212,9 +216,9 @@ qqline(sample3, distribution = function(p) qnorm(p, mean(sample3), sd(sample3)),
 
 By increasing the degrees of freedom, we get closer to the normal distribution. 
 
-```{r echo=TRUE}
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
 # Cauchy
-par(mfrow = c(2,2))
+par(mfrow = c(1,1))
 n = 100
 sample <- rcauchy(n, 0, 1)
 qqplot(qt(ppoints(n), 10), sample,
@@ -226,7 +230,7 @@ qqline(sample, distribution = function(p) qnorm(p, mean(sample), sd(sample)), co
 
 * **Write a general R function for checking the validity of the central limit theorem. Hint The function will consist of two parameters: clt_function <- function(n, distr), where the first one is the sampe size and the second one is the kind of distribution from which you generate. Use plots for visualizing the results.**
 
-```{r ex8lab, echo=TRUE}
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
 clt_function <- function(n, src.dist = NULL, param1 = NULL, param2 = NULL)
   {
   
@@ -246,7 +250,7 @@ clt_function <- function(n, src.dist = NULL, param1 = NULL, param2 = NULL)
   
   # Distribution:
   plot( density( means_of_samples ), col = "black", lwd = 1, 
-        main = c( "Central Limit Theorem", src.dist, n ))
+        main = paste("Central Limit Theorem for \n", src.dist, " distribution with n = ", n ))
   
   # Gaussian:
   sigma <- sd  ( means_of_samples )
