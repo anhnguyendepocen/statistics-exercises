@@ -1,9 +1,13 @@
 ---
-title: "Homework 1"
+title: "Homework 1 - Group C"
 author: "Gabriele Sarti, Katja Valjavec, Leticia Negrao Pinto"
 date: "March 27, 2019"
 output:
-  html_document: default
+  html_document:
+    toc: true
+    toc_depth: 2
+    theme: united
+    highlight: tango
 ---
 
 ```{r setup, include=FALSE}
