@@ -11,15 +11,15 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Exercise 1.1
 
-**Exponential random variable, $X \geq 0$, has p.d.f. $f(x) = \lambda \exp(-\lambdax).**
+**Exponential random variable, $X \geq 0$, has p.d.f. $f(x) = \lambda \exp(-\lambda x)$.**
 
 **1. Find the c.d.f. and the quantile function for $X$.**
 
 The cumulative probability function $P(x)$ of a random variable $x$ expresses the probability that x does not exceed the value $x$, as a function of x. $F(x)=P(X \leq x)$ $\forall x$.
 
-In the case of an Exponential distribution, we have the following: $F(x) = \int_{-\infty}^{x} f(x)dx = 1-exp(-\lambda x)$  for $x \geq 0$, 0 otherwise.
+In the case of an Exponential distribution, we have the following: $F(x) = \int_{-\infty}^{x} f(x)dx = 1-exp(-\lambda x)$  for $x \geq 0$, $0$ otherwise.
 
-If we have $x = 0$, so the probability will be $1-exp(-\lambda.0)=0$, as expected.
+If we have $x = 0$, so the probability will be $1-exp(-\lambda * 0)=0$, as expected.
 
 For the p-th quantile, we will have the following expression:
 
@@ -95,7 +95,7 @@ $$
 
 Using: 
 
-$\mbox{Var}(X) = \sigma^{2}_{x}$, $\mbox{Var}(Y) = \sigma^{2}_{y}$, $\mbox{Cov}(X,Y) = \sigma^{2}_{xy}$
+$$\mbox{Var}(X) = \sigma^{2}_{x}, \;\;\; \; \mbox{Var}(Y) = \sigma^{2}_{y}, \;\;\;\; \mbox{Cov}(X,Y) = \sigma^{2}_{xy}$$
 
 we have:
 
@@ -107,7 +107,7 @@ $$\mbox{Var}(X-Y) = \mbox{Var}(X) + \mbox{Var}(Y) - 2\,\mbox{Cov}(X,Y)$$
 
 And therefore:
 
-$$\mbox{Var}(X+Y)= \sigma^{2}_{x} + \sigma^{2}_{y} - 2\sigma^{2}_{xy}$$
+$$\mbox{Var}(X-Y)= \sigma^{2}_{x} + \sigma^{2}_{y} - 2\sigma^{2}_{xy}$$
 
 ## Exercise 1.8
 

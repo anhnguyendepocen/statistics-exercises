@@ -1,0 +1,684 @@
+---
+title: "Homework 1"
+author: "Gabriele Sarti, Katja Valjavec, Leticia Negrao Pinto"
+date: "March 27, 2019"
+output:
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Core Statistics
+
+## Exercise 1.1
+
+**Exponential random variable, $X \geq 0$, has p.d.f. $f(x) = \lambda \exp(-\lambda x)$.**
+
+**1. Find the c.d.f. and the quantile function for $X$.**
+
+The cumulative probability function $P(x)$ of a random variable $x$ expresses the probability that x does not exceed the value $x$, as a function of x. $F(x)=P(X \leq x)$ $\forall x$.
+
+In the case of an Exponential distribution, we have the following: $F(x) = \int_{-\infty}^{x} f(x)dx = 1-exp(-\lambda x)$  for $x \geq 0$, $0$ otherwise.
+
+If we have $x = 0$, so the probability will be $1-exp(-\lambda * 0)=0$, as expected.
+
+For the p-th quantile, we will have the following expression:
+
+$$p = 1-\exp(-\lambda x)$$
+$$1-p=\exp(-\lambda x)$$
+$$x=\frac{-ln(1-p)}{\lambda} $$
+So, it means that if $x = 0$ we have $p = 0$.
+
+**2. Find $Pr(X < \lambda)$ and the median of $X$**
+
+As discussed previously:
+
+$$P(x < \lambda)= \int_{-\infty}^{\lambda} f(x)dx = 1-exp(-\lambda^2)$$
+The median will be given by p = 0.5, so:
+
+$$ \mbox{median}=-\frac{\ln(1-0.5)}{\lambda}=-\frac{\ln(0.5)}{\lambda}$$
+
+**3. Find the mean and variance of $X$**
+
+The mean will be given by:
+
+$$ \mbox{mean}=E[x]=\int_{0}^{\infty} x \lambda \exp(-\lambda x)dx$$
+$$ \lambda\bigg[\frac{-x \exp(-\lambda x)}{\lambda}\bigg|_{0}^{\infty}+ \frac{1}{\lambda} \int_{0}^{\infty} \exp(-\lambda x)dx\bigg]$$
+$$ \lambda \bigg[ {0  + \frac{1}{\lambda} - \frac{\exp(-\lambda x)}{\lambda} \bigg| _{0}^{\infty}} \bigg] = \lambda \frac{1}{\lambda^2}$$
+$$\mbox{mean}=\frac{1}{\lambda}$$
+And the variance:
+$$  \mbox{Var}(x)=\mbox{E}[x^2]-\mbox{E}[x]^2$$
+$$\mbox{E}[x^2]=\int_{0}^{\infty} x^2 \lambda \exp(-\lambda x)dx=\frac{2}{\lambda^2}$$
+$$\mbox{Var}(x)= \frac{2}{\lambda^2} - \frac{1}{\lambda^2}$$
+$$\mbox{variance}=\frac{1}{\lambda^2}$$
+
+## Exercise 1.2
+
+**Evaluate $Pr(X < 0.5, Y < 0.5)$ if $X$ and $Y$ have joint p.d.f. (1.2).**
+
+For any constants $a \leq b$, we have that:
+$$Pr(a \leq X \leq b,\, a \leq Y \leq b) = \int_a^b\int_a^b f(x,y)\, dx \, dy$$ 
+with $f(x,y) \geq 0$ and $\int_{-\infty}^{\infty}\int_{-\infty}^{\infty}f(x,y)\, dx\, dy = 1$.
+
+The joint probability distribution function for $X,Y$ is defined as:
+
+$$f(x,y) = \begin{cases}x+\frac{3}{2}y^2 & \mbox{if }0<x<1 \mbox{ and } 0<y<1\\0 & \mbox{otherwise} \end{cases}$$
+
+Thus, we can consider 0 as the lower bound $a$ of the first equation and, by definition of the problem, 0.5 as the upper bound $b$. We have that:
+
+$$
+\begin{aligned}
+Pr(X < 0.5, Y < 0.5) &= \int_{0}^{0.5}\int_{0}^{0.5} f(x,y) \,dx\,dy \\[5pt]
+&= \int_{0}^{0.5}\int_{0}^{0.5} x+\frac{3}{2}y^2 \,dx\,dy \\[5pt]
+&= \int_{0}^{0.5}[\frac{1}{2}x^2+\frac{3}{2}y^2x]_{x=0}^{x=0.5}\,dy \\[5pt]
+&= \int_{0}^{0.5}\frac{1}{8}+\frac{3}{4}y^2\,dy \\[5pt]
+&= [\frac{1}{8}y+\frac{1}{4}y^3]_{y=0}^{y=0.5} \\[5pt]
+&= \frac{1}{16} + \frac{1}{32} = \frac{3}{32} = 0.09357
+\end{aligned}
+$$
+
+## Exercise 1.6
+
+**Let $X$ and $Y$ be non-independent random variables, such that $var(X) = \sigma^2_x,\; var(Y) = \sigma^2_y$ and $cov(X,Y) = \sigma^2_{xy}$. Using the result from Section 1.6.2 find $var(X + Y)$ and $var(X-Y)$.**
+
+$$
+\begin{align}
+\mbox{Var}(X+Y) &= E [((X+Y) - E[(X+Y)])^{2}] \\[5pt]
+&= E[(X+Y)^{2}] - [E(X+Y)]^{2} \\[5pt]
+&= E[X^{2} + 2XY + Y^{2}] - [E(X)+E(Y)]^{2} \\[5pt]
+&= E(X^{2}) + 2E(XY) + E(Y^{2} - [E(X)^{2} - 2E(X)E(Y) + E(Y)^{2}] \\[5pt]
+&= E(X)^{2} + 2E(XY) + E(Y)^{2} - [E(Y)]^{2} + 2[E(XY) - E(X)E(Y)] \\[5pt]
+&= \mbox{Var}(X) + \mbox{Var}(Y) + 2[E(XY)-E(X)E(Y)] \\[5pt]
+&= \mbox{Cov}(X,Y) = E(XY) - E(X)E(Y) \\[5pt]
+&= \mbox{Var}(X+Y) = \mbox{Var}(X) + \mbox{Var}(Y) + 2\,\mbox{Cov}(X,Y)
+\end{align}
+$$
+
+Using: 
+
+$$\mbox{Var}(X) = \sigma^{2}_{x}, \;\;\; \; \mbox{Var}(Y) = \sigma^{2}_{y}, \;\;\;\; \mbox{Cov}(X,Y) = \sigma^{2}_{xy}$$
+
+we have:
+
+$$\mbox{Var}(X+Y)= \sigma^{2}_{x} + \sigma^{2}_{y} + 2\sigma^{2}_{xy}$$
+
+Similarly, we have:
+
+$$\mbox{Var}(X-Y) = \mbox{Var}(X) + \mbox{Var}(Y) - 2\,\mbox{Cov}(X,Y)$$
+
+And therefore:
+
+$$\mbox{Var}(X-Y)= \sigma^{2}_{x} + \sigma^{2}_{y} - 2\sigma^{2}_{xy}$$
+
+## Exercise 1.8
+
+**If $\log(X) \sim N(\mu, \sigma^2)$, find the p.d.f. of X.**
+
+This distribution is known as Lognormal distribution.
+Considering: $\ln(X)=Y$; $Y \sim N(\mu,\sigma^2)$
+
+We have:
+$$f_Y(Y)=\frac{1}{\sqrt{2 \pi \sigma^2}}\exp(-\frac{(Y-\mu)^2}{2 \sigma^2}) $$
+Doing:
+$$X=e^Y=g(Y)$$
+$$Y=\ln(X)=g^{-1}(X)$$
+We get that:
+$$ \frac{dg^{-1}(X)}{dX}=\frac{1}{X}$$
+And the following relation is true:
+$$f_Y(Y)=f_X[g^{-1}(Y)]\bigg|\frac{dg^{-1}(Y)}{dY}\bigg|$$
+or: $f_YdY=f_X(X)dX$
+
+Then, we finally have the p.d.f. of X:
+
+$$f_X(X)= \frac{1}{X\sqrt{2 \pi \sigma^2}}\exp(-\frac{(\ln(X)-\mu)^2}{2 \sigma^2})$$
+
+## Exercise 1.9
+
+**Discrete random variable $Y$ has a Poisson distribution with parameter $\lambda$ if its p.d.f. is $f(y) = \lambda^y e^{−\lambda}/y!$, for $y = 0, 1,\dots$**
+
+**a. Find the moment generating function for $Y$ (hint: the power series representation of the exponential function is useful).**
+
+Since the Poisson distribution is discrete and the moment generating function is defined as $M_X(s) = E(e^{sX})$, with $s$ real, we have that:
+
+$$
+\begin{aligned}
+M_Y(s) = E(e^{sY}) &= \sum^\infty_{x=0}e^{sy} \frac{\lambda^y e^{−\lambda}}{y!} \\
+&= e^{-\lambda} \sum^\infty_{x=0}\frac{(\lambda e^s)^y}{y!}
+\end{aligned}
+$$
+Given the power series representation of the exponential function $\sum^\infty_{x=0}\frac{a^y}{y!} = e^a$, we can express $M_Y(s)$ as:
+
+$$M_Y(s) = e^{-\lambda}e^{\lambda e^s} = e^{\lambda(e^s - 1)}$$
+
+**b. If $Y_1 \sim \mbox{Poi}(\lambda_1)$ and independently $Y_2 \sim \mbox{Poi}(\lambda_2)$, deduce the distribution of $Y_1 + Y_2$ , by employing a general property of m.g.f.s.**
+
+Since $Y_1$ and $Y_2$ are independent random variables, we have that:
+
+$$M_{Y_1 + Y_2}(s) = M_{Y_1}(s)M_{Y_2}(s) = e^{\lambda_1(e^s - 1)}e^{\lambda_2(e^s - 1)} = e^{(\lambda_1 + \lambda_2)(e^s - 1)}$$
+Thus, from its moment generating function we can deduce that $Y_1 + Y_2 \sim \mbox{Pois}(\lambda_1 + \lambda_2)$
+
+**c. Making use of the previous result and the central limit theorem, deduce the normal approximation to the Poisson distribution.**
+
+From the previous point it is evident that if $Y_i \sim \mbox{Pois}(\lambda_i)$ for $i = 1,\dots, n$ are independent and $\lambda = \sum^n_{i=1}\lambda_i$, then $Y = (\sum^n_{i=1}Y_i) \sim \mbox{Pois}(\lambda)$. By applying the Central Limit Theorem, we get:
+
+$$Y \sim N(\mu = \lambda, \sigma^2 = \lambda)$$
+Thus, if $\lambda$ is large the distribution $\mbox{Pois}(\lambda)$ gets approximated well by the distribution $N(\lambda, \lambda)$
+
+**d. Confirm the previous result graphically, using R functions dpois , dnorm ,plot or barplot and lines. Confirm that the approximation improves with increasing $\lambda$.**
+
+In the following graph we can see five examples of Poisson distribution with growing values of $\lambda$ (in color) and their respective normal approximations (in orange). It is evident how approximations are closer to the original distributions for larger values of $\lambda$.
+
+``` {r echo=TRUE}
+lambda <- c(5, 10, 25, 50, 100)
+plot(0:130, dpois(0:130, lambda[1]), xlim=c(0,130), ylim=c(0,0.2), type='l', xlab=expression(lambda), ylab="f(x)", col='red', main=expression(paste("Some examples of normal approximations to the Poisson distribution w.r.t.",lambda)))
+lines(0:130, dpois(0:130, lambda[2]), col='red')
+lines(0:130, dpois(0:130, lambda[3]), col='red')
+lines(0:130, dpois(0:130, lambda[4]), col='red')
+lines(0:130, dpois(0:130, lambda[5]), col='red')
+
+lines(0:130, dnorm(0:130, lambda[1], sqrt(lambda[1])), type='h', col='black')
+lines(0:130, dnorm(0:130, lambda[2], sqrt(lambda[2])), type='h', col='black')
+lines(0:130, dnorm(0:130, lambda[3], sqrt(lambda[3])), type='h', col='black')
+lines(0:130, dnorm(0:130, lambda[4], sqrt(lambda[4])), type='h', col='black')
+lines(0:130, dnorm(0:130, lambda[5], sqrt(lambda[5])), type='h', col='black')
+legend("topright", legend=c("Poisson distribution", "Normal distribution"), fill=c("red", "black"))
+```
+
+In the following graph, we plot the sum of pointwise distances between Poisson distributions and their respective normal approximations for $0 < \lambda < 50$. As we expected from our computations and our previous graph, the error decreases when $\lambda$ increases.
+
+``` {r echo=TRUE}
+difference <- function(lambda){
+  x <- dpois(0:lambda, lambda) - dnorm(0:lambda, lambda, sqrt(lambda))
+  return(sum(x))
+}
+difference=Vectorize(difference)
+lambda <- c(1:50)
+plot(lambda, difference(lambda), type='l', col='red', xlab=expression(lambda), ylab=expression(paste("N(",lambda,",",lambda,") - Pois(", lambda, ")")), main=expression(paste("Error of the normal approximation to the Poisson distribution w.r.t. ",lambda)))
+```
+
+# Data Analysis and Graphics Using R
+
+## Exercise 4
+
+**For the data frame possum (DAAG package)**
+
+**(a) Use the function str() to get information on each of the columns.**
+
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+library(DAAG)
+for (col in names(possum))
+{
+  str(possum[col])
+}
+```
+
+**(b) Using the function complete.cases(), determine the rows in which one or more values is missing. Print those rows. In which columns do the missing values appear?**
+
+There are two missing values in `age` and a missing value in `footlgth`.
+
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+library(DAAG)
+possum[!complete.cases(possum),]
+```
+
+## Exercise 6
+
+**Create a data frame called Manitoba.lakes that contains the lake’s elevation (in meters above sea level) and area (in square kilometers) as listed below. Assign the names of the lakes using the row.names() function.**
+
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+lakes <- c("Winnipeg", "Winnipegosis", "Manitoba", "SouthernIndian", 
+           "Cedar", "Island", "Gods", "Cross", "Playgreen")
+elevation <- c(217, 254, 248, 254, 253, 227, 178, 207, 217)
+area <- c(24387, 5374, 4624, 2247, 1353, 1223, 1151, 755, 657)
+
+#Create data frame
+Manitoba.lakes <- data.frame(elevation, area)
+
+#Assigning names
+row.names(Manitoba.lakes) = lakes
+Manitoba.lakes
+```
+
+**a) Use the following code to plot(log2(area)) versus elevation, adding labeling information (there is an extreme value of area that makes a logarithmic scale pretty much essential).**
+
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+attach(Manitoba.lakes)
+plot(log2(area) ~ elevation, pch=16, xlim=c(170,280))
+#NB: Doubling the area increases log2(area) by 1.0
+text(log2(area) ~ elevation, labels=row.names(Manitoba.lakes), pos=4)
+text(log2(area) ~ elevation, labels=area, pos=2)
+title("Manitoba's Largest Lakes")
+detach(Manitoba.lakes)
+```
+
+**b) Repeat the plot and associated labeling, now plotting area versus elevation, but specifying log="y"in order to obtain a logarithmic y-scale.**
+
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+attach(Manitoba.lakes)
+plot(area ~ elevation, log="y", pch=16, xlim=c(170,280))
+#NB: Doubling the area increases log2(area) by 1.0
+text(area ~ elevation, labels=row.names(Manitoba.lakes), pos=4)
+text(area ~ elevation, labels=area, pos=2)
+title("Manitoba's Largest Lakes")
+detach(Manitoba.lakes)
+```
+
+## Exercise 11
+
+**Run the following code:**
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+gender <- factor(c(rep("female", 91), rep("male", 92)))
+table(gender)
+gender <- factor(gender, levels=c("male", "female"))
+table(gender)
+gender <- factor(gender, levels=c("Male", "female")) # Note the mistake: "Male" should be "male"
+table(gender)
+table(gender, exclude=NULL)
+rm(gender) # Remove gender
+```
+**Explain the output from the successive uses of table().**
+
+At first a vector named 'gender' was constructed with two categories: 'male' and 'female'.
+
+   (#1) The first table() returns the number of males and females as defined in the assignement of 'gender'.
+   
+   (#2) The second table() returns the same as the previous one, but this time the vector was redefined to be the levels of 'male' and 'female' of vector 'gender'.
+   
+   (#3) The third table() will not return the results for 'male' because of the typo ('Male' instead of 'male') when redefining the vector 'gender'. In this case the vector will have only 'female' and an unnamed level for lowercase 'male', so the table() will return 0 uppercase Male.
+   
+   (#4) Finally, when we type 'table(gender, exclude=NULL)' it will return the amount correspondent to all levels in gender vector, namely 'Male', 'female', and the level which previously was 'male', but now is unnamed, as discussed previously.
+
+## Exercise 12
+
+**Write a function that calculates the proportion of values in a vector x that exceed some value cutoff.**
+
+**(a) Use the sequence of numbers **$1, 2, \dots , 100$ **to check that this function gives the result that is expected.**
+
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+exceed_prop <- function(X, cutoff)
+{
+  return(length(X[X > cutoff])/length(X))
+}
+sequence <- c(1:100)
+print(paste("Higher than 0:", exceed_prop(sequence, 0)))
+print(paste("Higher than 50:", exceed_prop(sequence, 50)))
+print(paste("Higher than 70:", exceed_prop(sequence, 70)))
+print(paste("Higher than 100:", exceed_prop(sequence, 100)))
+```
+
+**(b) Obtain the vector ex01.36 from the Devore6 (or Devore7) package. These data give the times required for individuals to escape from an oil platform during a drill. Use dotplot() to show the distribution of times. Calculate the proportion of escape times that exceed 7 minutes.**
+
+We assume that the times contained in the vector are expressed in seconds.
+
+
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+library(Devore7)
+exceed_prop <- function(X, cutoff)
+{
+  return(length(X[X > cutoff])/length(X))
+}
+dotplot(ex01.36$C1)
+print(paste("Proportion above 7 minutes:", exceed_prop(ex01.36$C1, 7 * 60)))
+```
+
+## Exercise 13
+
+**The following plots four different transformations of the Animals data from the MASS package. What different aspects of the data do these different graphs emphasize? Consider the effect on low values of the variables, as contrasted with the effect on high values.**
+
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+par(mfrow=c(2,2)) # 2 by 2 layout on the page
+library(MASS) # Animals is in the MASS package
+plot(brain  ~ body, data=Animals)
+plot(sqrt(brain)  ~ sqrt(body), data=Animals)
+plot(I(brain^0.1) ~ I(body^0.1), data=Animals) # I() forces its argument to be treated "as is"
+plot(log(brain) ~ log(body), data=Animals)
+par(mfrow=c(1,1)) # Restore to 1 figure per page
+```
+
+The first graph presents us with the range of values in the data, and we can observe, that there are only few points that are much larger than the rest of the data (skewness towards large values). This results in unclear representation, since the majority of the points lies close to the origin.  Even in the second graph, where we apply square root function and the effect of outliers minimizes, the presentation of the data is not yet satisfactory. Applying the next transformation data becomes more hashed and we can already see clearer correlation between values.
+
+With the final logarithmic representation, we reduce wide range of quantities to a more manageable size and make our data equally spread, which makes a clear representation of correlation between brain and body size.
+
+## Exercise 15
+
+**The data frame socsupport (DAAG) has data from a survey on social and other kinds of support, for a group of university students. It includes Beck Depression Inventory (BDI) scores. The following are two alternative plots of BDI against age:**
+
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+library(DAAG)
+par(mfrow=c(1,2))
+
+plot(BDI ~ age, data=socsupport)
+plot(BDI ~ unclass(age), data=socsupport)
+```
+
+**For examination of cases where the score seems very high, which plot is more useful? Explain.**
+
+In cases where the score seems very high the most useful plot is the first one (`plot(BDI ~ age, data=socsupport)`) because the outliars appear explicitly.
+
+**Why is it necessary to be cautious in making anything of the plots for students in the three oldest age categories (25-30, 31-40, 40+)?**
+
+We need to be cautious because the number of students in these categories is very low to make inferences.
+
+```{r, echo=TRUE,  message=FALSE, warning=FALSE}
+library(DAAG)
+data = socsupport 
+table(data$age)
+```
+
+## Exercise 17
+
+**Given a vector x, the following demonstrates alternative ways to create a vector of numbers from 1 through n, where n is the length of the vector:**
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+x <- c(8, 54, 534, 1630, 6611)
+seq(1, length(x))
+seq(along=x)
+```
+**Now set x <- NULL and repeat each of the calculations seq(1, length(x)) and seq(along=x). Which version of the calculation should be used in order to return a vector of length 0 in the event that the supplied argument is NULL.**
+
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+x <- NULL
+seq(1, length(x))
+seq(along=x)
+```
+
+The second version of the calculation, `seq(along=x)`, should be used in case that the supplied argument is NULL, since the first index (1) of the first version will lead to a descending vector from 1 to 0 instead of the expected result of a vector of length 0.
+
+## Exercise 20
+
+**The help page for iris (type help(iris)) gives code that converts the data in iris3 (datasets package) to case-by-variable format, with column names “Sepal.Length”, “Sepal.Width”, “Petal.Length”, “Petal.Width”, and “Species”. Look up the help pages for the functions that are used, and make sure that you understand them. Then add annotation to this code that explains each step in the computation.**
+
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+help(iris)
+```
+
+iris is a data frame with 150 cases (rows) and 5 variables (columns) named Sepal.Length, Sepal.Width, Petal.Length, Petal.Width, and Species.
+
+iris3 gives the same data arranged as a 3-dimensional array of size 50 by 4 by 3, as represented by S-PLUS. The first dimension gives the case number within the species subsample, the second the measurements with names Sepal L., Sepal W., Petal L., and Petal W., and the third the species.
+
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+# To obtain dimension names of iris3 dataset. Output:
+# 1.NULL
+# 2. 'Sepal L.' 'Sepal W.' 'Petal L.' 'Petal W.'
+# 3. 'Setosa' 'Versicolor' 'Virginica'
+dni3 <- dimnames(iris3) 
+
+
+# Creates a new dataframe. Function 'aperm' is used to transpose an
+# array by permuting its dimensions and optionally resizing it.
+ii <- data.frame(matrix(aperm(iris3, c(1,3,2)), ncol = 4,
+                        dimnames = list(NULL, sub(" L.",".Length",
+                                        sub(" W.",".Width", dni3[[2]])))), # To obtain names of variables from dni3 
+    Species = gl(3, 50, labels = sub("S", "s", sub("V", "v", dni3[[3]]))))
+all.equal(ii, iris) # Checks if new dataframe elements are equal to original iris dataframe. Output is 'TRUE'.
+```
+
+# Laboratory
+
+## Exercise 1
+
+* **Write a function binomial(x,n,p) for the binomial distribution above, depending on parameters x,n,p, and test it with some prespecified values. Use the function choose() for the binomial coefficient.**
+
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+binomial <- function(x,n,p){
+    
+    return(choose(n,x) * (p^x) * (1-p)^(n-x))
+}
+all.equal(binomial(2,5,0.2), dbinom(2,5,0.2)) # Test with some prespecified values.
+```
+
+* **Plot two binomials with n=20, and p=0.3, 0.6 respectively.**
+
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+#graphical setting for margins and type of points
+par(mfrow=c(1,2),mar=c(5,4,2,1), oma=c(0,0.2,0.2,0), pty="s", pch = 16)
+#plot the binomial distributions with different input
+plot(0:20, binomial(0:20, 20, 0.3), 
+     xlab = "x", ylab = "f(x)", cex.lab=1, main="p=0.3", cex.main=1)
+plot(0:20, binomial(0:20, 20, 0.6), xlab ="x", ylab = "f(x)",
+      cex.lab=1, main= "p=0.6", cex.main=1)
+```
+
+## Exercise 2
+
+* **Generate in R the same output, but using rgeom() for generating the random variables. Hint: generate n times three geometric distribution X1,…,X3 with p=0.08, store them in a matrix and compute then the sum Y.**
+
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+set.seed(2019)
+
+# Matrix with geometric distributions:
+n <- 10000
+prob <- 0.08
+
+Xmatrix = matrix(nrow=n, ncol=3)
+
+# Each column corresponds to X1, X2 and X3:
+for (i in 1:3)
+{
+  Xmatrix[,i]=c(rgeom(n,prob))
+}
+
+# Y=X1+X2+X3:
+Y=c(rowSums(Xmatrix))
+
+# Graph:
+plot(density(Y), type = "p", col = "black", lwd = 1, pch=20, 
+xlab="Y=number of failures before k successes", ylab="f(x)", main="")
+```
+
+## Exercise 3
+
+* **Show in R, also graphically, that Gamma(n/2,1/2) coincides with a** $\chi^2_n$.
+
+* **Find the 5% and the 95% quantiles of a Gamma(3,3).**
+
+From the following plot we can see that the $\chi^2_n$ and the $\gamma(\frac{n}{2},\frac{1}{2})$ distributions coincide.
+
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+shapes <- c(5, 10, 25, 50)
+plot(1:100, dgamma(1:100, shapes[1]/2, 1/2), type="h", col='black', xlab="x", ylab="f(x)", main="Comparison between Gamma and Chi-square distributions")
+lines(1:100, dchisq(1:100, shapes[1]), col='red')
+lines(1:100, dgamma(1:100, shapes[2]/2, 1/2), type="h", col='black')
+lines(1:100, dchisq(1:100, shapes[2]), col='red')
+lines(1:100, dgamma(1:100, shapes[3]/2, 1/2), type="h", col='black')
+lines(1:100, dchisq(1:100, shapes[3]), col='red')
+lines(1:100, dgamma(1:100, shapes[4]/2, 1/2), type="h", col='black')
+lines(1:100, dchisq(1:100, shapes[4]), col='red')
+legend("topright", legend=c("Gamma distribution", "Chi-square distribution"), fill=c("black", "red"))
+```
+
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+print(paste("The 5% quantile for Gamma(3,3) is found at ", qgamma(0.05,3,3)))
+print(paste("The 95% quantile for Gamma(3,3) is found at ", qgamma(0.95,3,3)))
+```
+
+## Exercise 4
+
+* **Generate n=1000 values from a Beta(5,2) and compute the sample mean and the sample variance.**
+
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+sample <- rbeta(1000, 5, 2) 
+
+mean <- mean(sample) # Sample mean.
+sprintf("Sample mean: %s", mean)
+
+variance <- var(sample) # Sample variance.
+sprintf("Sample variance: %s", variance)
+```
+
+## Exercise 5
+
+* **Analogously, show with a simple R function that a negative binomial distribution may be seen as a mixture between a Poisson and a Gamma. In symbols: X|Y∼P(Y), Y∼Gamma(α,β), then X∼….**
+
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+
+set.seed(2019)
+
+# Mixture of Poisson and Gamma distributions:
+mixture <- function(df, n)
+{  
+  Lambda = rgamma(n, df, df)
+  X = rpois(n, Lambda)
+  return(X)  
+}
+
+df <- 5
+n <- 100000
+
+# Plot of the mixture distribution - PoissonGamma - in black:
+PoissonGamma <- mixture(df,n)
+plot( density(PoissonGamma), col="black", lwd=1, type="h",
+main="Negative Binomial distribution as a Poisson-Gamma mixture")
+
+# Negative Binomial distribution superposition - in red:
+Nbinom <- c(rnbinom(n, size=df, prob=df/(df+1)))
+lines( density(Nbinom), col="red", lwd=2 )
+
+legend("topright", legend=c("Poisson-Gamma Mixture", "Negative Binomial"), fill=c("black", "red"))
+
+# Comparison between the mean and variance:
+
+# Mean PoissonGamma:
+mean(PoissonGamma)
+# Mean Negative Binomial:
+mean(Nbinom)
+
+# Variance PoissonGamma:
+var(PoissonGamma)
+# Variance Negative Binomial:
+var(Nbinom)
+
+```
+
+## Exercise 6
+
+* **Instead of using the built-in function ecdf(), write your own R function for the empirical cumulative distribution function and reproduce the two plots above.**
+
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+ecdf_custom <- function(X)
+{
+  return(Vectorize(function(t) length(X[X<=t])/length(X)))
+}
+
+set.seed(2)
+par(mfrow=c(2,2))
+n<-50
+y<-rbeta(n, 3,4)
+n2<-500
+y2<-rbeta(n2, 3,4)
+tt<-seq(from=0, to=1, by=0.01)
+
+edf_beta<-ecdf_custom(y)
+plot(edf_beta, main="ECDF_custom for n=50", type='l')
+lines(tt, pbeta(tt,3,4), col=2, lty=2, lwd=2)
+
+edf_beta<-ecdf(y)
+plot(edf_beta, verticals=TRUE, do.p=FALSE, main="ECDF and CDF: n=50")
+lines(tt, pbeta(tt,3,4), col=2, lty=2, lwd=2)
+
+edf_beta2<-ecdf_custom(y2)
+plot(edf_beta2, main="ECDF_custom n=500", type='l')
+lines(tt, pbeta(tt,3,4), col=2, lty=2, lwd=2)
+
+edf_beta2<-ecdf(y2)
+plot(edf_beta2, verticals=TRUE, do.p=FALSE, main="ECDF and CDF: n=500")
+lines(tt, pbeta(tt,3,4), col=2, lty=2, lwd=2)
+```
+
+## Exercise 7
+
+**Compare in R the assumption of normality for these samples:**
+
+* **y1,…,y100∼tν, with ν=5,20,100. What does it happens when the number of degrees of freedom ν increases?**
+* **y1,…,y100∼Cauchy(0,1). Do you note something weird for the extremes quantiles?**
+
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+sample1 <- rt(100, 5)
+sample2 <- rt(100, 20)
+sample3 <- rt(100, 100)
+
+par(mfrow = c(2,2))
+
+# Plotting sample 1 (degrees of freedom = 5)
+qqplot(qt(ppoints(100), 5), sample1,
+      xlab = "True quantiles", ylab = "Sample quantiles",
+      main = "Q-Q plot for t(5)")
+qqline(sample1, distribution = function(p) qnorm(p, mean(sample1), sd(sample1)), col = 2)
+       
+# Plotting sample 2 (degrees of freedom = 20)
+qqplot(qt(ppoints(100), 20), sample2,
+      xlab = "True quantiles", ylab = "Sample quantiles",
+      main = "Q-Q plot for t(20)")
+qqline(sample2, distribution = function(p) qnorm(p, mean(sample2), sd(sample2)), col = 2)
+       
+# Plotting sample 3 (degrees of freedom = 100)
+qqplot(qt(ppoints(100), 100), sample1,
+      xlab = "True quantiles", ylab = "Sample quantiles",
+      main = "Q-Q plot for t(100)")
+qqline(sample3, distribution = function(p) qnorm(p, mean(sample3), sd(sample3)), col = 2)
+```
+
+By increasing the degrees of freedom, we get closer to the normal distribution. 
+
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+# Cauchy
+par(mfrow = c(1,1))
+n = 100
+sample <- rcauchy(n, 0, 1)
+qqplot(qt(ppoints(n), 10), sample,
+      xlab = "True quantiles", ylab = "Sample quantiles")
+qqline(sample, distribution = function(p) qnorm(p, mean(sample), sd(sample)), col = 2)
+```
+
+In extreme quantiles, points diverge further from normal distribution, since Cauchy distribution is more heavy-tailed than the normal distribution.
+
+## Exercise 8
+
+* **Write a general R function for checking the validity of the central limit theorem. Hint: The function will consist of two parameters: clt_function <- function(n, distr), where the first one is the sampe size and the second one is the kind of distribution from which you generate. Use plots for visualizing the results.**
+
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+clt_function <- function(n, src.dist = NULL, param1 = NULL, param2 = NULL)
+  {
+  
+  r <- 10000  # Number of samples
+  
+  # matrix r x n. Each row is considered one sample:
+  samples <- switch( src.dist,
+                     "ChiSqrt"     = matrix( rchisq( n*r,param1 ),r ),
+                     "Exponential" = matrix( rexp( n*r,param1 ),r ),
+                     "Gamma"       = matrix( rgamma( n*r,param1,param2 ),r ),
+                     "Normal"      = matrix( rnorm( n*r,param1,param2 ),r ),
+                     "Poisson"     = matrix( rpois( n*r,param1 ),r ), 
+                     "Uniform"     = matrix( runif( n*r,param1,param2 ),r )	
+                    )
+  
+  means_of_samples <- apply( samples, 1, mean )
+  
+  # Distribution:
+  plot( density( means_of_samples ), col = "black", lwd = 1, 
+        main = paste("Central Limit Theorem for \n", src.dist, " distribution with n = ", n ))
+  
+  # Gaussian:
+  sigma <- sd  ( means_of_samples )
+  mu    <- mean( means_of_samples )
+  curve( dnorm(x, mu, sigma), add = TRUE, col="red", lwd=2 ) 
+  
+}
+
+# Example 1 parameter - Poisson distribution
+par(mfrow=c(2,2))
+for (i in c(1,5,10,100))
+{
+   clt_function(i,src.dist="Poisson",param1=1)
+}
+
+# Example 2 parameters - Uniform distribution
+for (i in c(1,5,10,100))
+{
+    clt_function(i,src.dist="Uniform",param1=1, param2=2)
+}
+
+```
+
+Analysing the graphs we can easily note that the distributions tend to a Gaussian with the increase of the sample size.

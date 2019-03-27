@@ -95,9 +95,9 @@ At first a vector named 'gender' was constructed with two categories: 'male' and
    
    (#2) The second table() returns the same as the previous one, but this time the vector was redefined to be the levels of 'male' and 'female' of vector 'gender'.
    
-   (#3) The third table() will not return the results for 'male' because of the typo ('Male' instead of 'male') when redefining the vector 'gender'. In this case the vector will have only 'female' and '<NA>', so the table() will return 0 Male.
+   (#3) The third table() will not return the results for 'male' because of the typo ('Male' instead of 'male') when redefining the vector 'gender'. In this case the vector will have only 'female' and an unnamed level for lowercase 'male', so the table() will return 0 uppercase Male.
    
-   (#4) Finally, when we type 'table(gender, exclude=NULL)' it will return the amount correspondent to 'Male', 'female', and '<NA>', as discussed previously.
+   (#4) Finally, when we type 'table(gender, exclude=NULL)' it will return the amount correspondent to all levels in gender vector, namely 'Male', 'female', and the level which previously was 'male', but now is unnamed, as discussed previously.
 
 ## Exercise 12
 
@@ -146,7 +146,9 @@ plot(log(brain) ~ log(body), data=Animals)
 par(mfrow=c(1,1)) # Restore to 1 figure per page
 ```
 
-#TODO
+The first graph presents us with the range of values in the data, and we can observe, that there are only few points that are much larger than the rest of the data (skewness towards large values). This results in unclear representation, since the majority of the points lies close to the origin.  Even in the second graph, where we apply square root function and the effect of outliers minimizes, the presentation of the data is not yet satisfactory. Applying the next transformation data becomes more hashed and we can already see clearer correlation between values.
+
+With the final logarithmic representation, we reduce wide range of quantities to a more manageable size and make our data equally spread, which makes a clear representation of correlation between brain and body size.
 
 ## Exercise 15
 
@@ -159,9 +161,10 @@ par(mfrow=c(1,2))
 plot(BDI ~ age, data=socsupport)
 plot(BDI ~ unclass(age), data=socsupport)
 ```
+
 **For examination of cases where the score seems very high, which plot is more useful? Explain.**
 
-In cases where the score seems very high the most useful plot is the first one $plot(BDI \sim age, data=socsupport)$ because the outliars apear explicitly.
+In cases where the score seems very high the most useful plot is the first one (`plot(BDI ~ age, data=socsupport)`) because the outliars appear explicitly.
 
 **Why is it necessary to be cautious in making anything of the plots for students in the three oldest age categories (25-30, 31-40, 40+)?**
 
@@ -184,9 +187,6 @@ seq(along=x)
 **Now set x <- NULL and repeat each of the calculations seq(1, length(x)) and seq(along=x). Which version of the calculation should be used in order to return a vector of length 0 in the event that the supplied argument is NULL.**
 
 ```{r echo=TRUE,  message=FALSE, warning=FALSE}
-x <- c(8, 54, 534, 1630, 6611)
-seq(1, length(x))
-seq(along=x)
 x <- NULL
 seq(1, length(x))
 seq(along=x)
@@ -207,19 +207,18 @@ iris is a data frame with 150 cases (rows) and 5 variables (columns) named Sepal
 iris3 gives the same data arranged as a 3-dimensional array of size 50 by 4 by 3, as represented by S-PLUS. The first dimension gives the case number within the species subsample, the second the measurements with names Sepal L., Sepal W., Petal L., and Petal W., and the third the species.
 
 ```{r echo=TRUE,  message=FALSE, warning=FALSE}
-dni3 <- dimnames(iris3) # To obtain dimension names of iris3 dataset. Output:
+# To obtain dimension names of iris3 dataset. Output:
 # 1.NULL
 # 2. 'Sepal L.' 'Sepal W.' 'Petal L.' 'Petal W.'
 # 3. 'Setosa' 'Versicolor' 'Virginica'
+dni3 <- dimnames(iris3) 
 
-species = gl(3, 50, labels = sub("S", "s", sub("V", "v", dni3[[3]])))
 
-# To obtain names of variables from dni3 
-sublist <- sub(" L.",".Length", sub(" W.",".Width", dni3[[2]]))
-
-# To create new dataframe. Function 'aperm' is used to transpose an
+# Creates a new dataframe. Function 'aperm' is used to transpose an
 # array by permuting its dimensions and optionally resizing it.
 ii <- data.frame(matrix(aperm(iris3, c(1,3,2)), ncol = 4,
-                 dimnames = list(NULL, sublist)), Species = species)
+                        dimnames = list(NULL, sub(" L.",".Length",
+                                        sub(" W.",".Width", dni3[[2]])))), # To obtain names of variables from dni3 
+    Species = gl(3, 50, labels = sub("S", "s", sub("V", "v", dni3[[3]]))))
 all.equal(ii, iris) # Checks if new dataframe elements are equal to original iris dataframe. Output is 'TRUE'.
 ```

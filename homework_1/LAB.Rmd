@@ -21,7 +21,7 @@ binomial <- function(x,n,p){
 all.equal(binomial(2,5,0.2), dbinom(2,5,0.2)) # Test with some prespecified values.
 ```
 
-* **Plot two binomials with n=20, and p=0.3,0.6 respectively.**
+* **Plot two binomials with n=20, and p=0.3, 0.6 respectively.**
 
 ```{r echo=TRUE,  message=FALSE, warning=FALSE}
 #graphical setting for margins and type of points
@@ -121,12 +121,14 @@ n <- 100000
 
 # Plot of the mixture distribution - PoissonGamma - in black:
 PoissonGamma <- mixture(df,n)
-plot( density(PoissonGamma), col="black", lwd=1, 
+plot( density(PoissonGamma), col="black", lwd=1, type="h",
 main="Negative Binomial distribution as a Poisson-Gamma mixture")
 
 # Negative Binomial distribution superposition - in red:
 Nbinom <- c(rnbinom(n, size=df, prob=df/(df+1)))
 lines( density(Nbinom), col="red", lwd=2 )
+
+legend("topright", legend=c("Poisson-Gamma Mixture", "Negative Binomial"), fill=c("black", "red"))
 
 # Comparison between the mean and variance:
 
@@ -147,15 +149,9 @@ var(Nbinom)
 * **Instead of using the built-in function ecdf(), write your own R function for the empirical cumulative distribution function and reproduce the two plots above.**
 
 ```{r echo=TRUE,  message=FALSE, warning=FALSE}
-ecdf_custom <- function(t,X)
+ecdf_custom <- function(X)
 {
-  X <- sort(X)
-  out <- numeric(length(X))
-  for(i in 1:length(X)) {
-    indicator <- as.numeric(t<=X[i])
-    out[i] <- sum(indicator)/length(X)
-  }
-  out
+  return(Vectorize(function(t) length(X[X<=t])/length(X)))
 }
 
 set.seed(2)
@@ -166,15 +162,17 @@ n2<-500
 y2<-rbeta(n2, 3,4)
 tt<-seq(from=0, to=1, by=0.01)
 
-edf_beta<-ecdf_custom(y, tt)
+edf_beta<-ecdf_custom(y)
 plot(edf_beta, main="ECDF_custom for n=50", type='l')
+lines(tt, pbeta(tt,3,4), col=2, lty=2, lwd=2)
 
 edf_beta<-ecdf(y)
 plot(edf_beta, verticals=TRUE, do.p=FALSE, main="ECDF and CDF: n=50")
 lines(tt, pbeta(tt,3,4), col=2, lty=2, lwd=2)
 
-edf_beta2<-ecdf_custom(y2, tt)
+edf_beta2<-ecdf_custom(y2)
 plot(edf_beta2, main="ECDF_custom n=500", type='l')
+lines(tt, pbeta(tt,3,4), col=2, lty=2, lwd=2)
 
 edf_beta2<-ecdf(y2)
 plot(edf_beta2, verticals=TRUE, do.p=FALSE, main="ECDF and CDF: n=500")
@@ -226,9 +224,11 @@ qqplot(qt(ppoints(n), 10), sample,
 qqline(sample, distribution = function(p) qnorm(p, mean(sample), sd(sample)), col = 2)
 ```
 
+In extreme quantiles, points diverge further from normal distribution, since Cauchy distribution is more heavy-tailed than the normal distribution.
+
 ## Exercise 8
 
-* **Write a general R function for checking the validity of the central limit theorem. Hint The function will consist of two parameters: clt_function <- function(n, distr), where the first one is the sampe size and the second one is the kind of distribution from which you generate. Use plots for visualizing the results.**
+* **Write a general R function for checking the validity of the central limit theorem. Hint: The function will consist of two parameters: clt_function <- function(n, distr), where the first one is the sampe size and the second one is the kind of distribution from which you generate. Use plots for visualizing the results.**
 
 ```{r echo=TRUE,  message=FALSE, warning=FALSE}
 clt_function <- function(n, src.dist = NULL, param1 = NULL, param2 = NULL)
