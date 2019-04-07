@@ -35,3 +35,25 @@ In this section are listed the homeworks assigned from the previously cited sour
 | Gabriele Sarti       | 4, 12, 17 | 1.2, 1.9 | 3, 6    |
 | Katja Valjavec       | 6, 13, 20 | 1.6      | 1, 4, 7 |
 | Leticia Negrao Pinto | 11, 15    | 1.1, 1.8 | 2, 5, 8 |
+
+### Homework 2
+
+* **Due date:** April, Friday 19th 2019
+
+* **Group:** Group G
+
+* **Members:** Marco Franzon, Eduardo Gonnelli, Gabriele Sarti
+
+* **Sources:**
+
+  * DAAG, Chapter 3 and 4
+
+  * CS, Chapter 3
+
+  * LAB 2
+
+|                  | DAAG      | CS  | LAB  |
+|------------------|-----------|-----|------|
+| Gabriele Sarti   | 3.13      | 3.5 | 1, 4 |
+| Marco Franzon    | 3.10, 4.6 | /   | 2, 5 |
+| Eduardo Gonnelli | 3.11, 4.7 | 3.3 | 3    |
