@@ -1,0 +1,65 @@
+---
+title: "Core Statistics"
+author: "Gabriele Sarti, Eduardo Gonnelli, Marco Franzon"
+date: "April 10, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Exercise 3.3
+
+**Rewrite the following, replacing the loop with efficient code**
+
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+n <- 100000; z <- rnorm(n)
+zneg <- 0; j <- 1
+for (i in 1:n) {
+    if (z[i]<0) {
+        zneg[j] <- z[i]
+        j <- j + 1
+    }
+}
+```
+**Confirm that your rewrite is faster but gives the same result.**
+
+## Exercise 3.5
+
+**Consider solving the matrix equation $Ax=y$ for $x$, where $y$ is a known $n$ vector and $A$ is a known $n×n$ matrix. The formal solution to the problem is $x=A^{−1}y$, but it is possible to solve the equation directly, without actually forming $A^{−1}$. This question explores this direct solution. Read the help file for solve before trying it**
+
+**a. First create an $A,x$ and $y$ satisfying $Ax=y$.**
+
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+set.seed(42); n <- 1000
+A <- matrix(runif(n*n),n,n); x.true <- runif(n)
+y <- A%*%x.true
+```
+
+**The idea is to experiment with solving $Ax=y$ for $x$, but with a known truth to compare the answer to.**
+
+**b. Using solve, form the matrix $A^{−1}$ explicitly and then form $x_1=A^{−1}y$. Note how long this takes. Also assess the mean absolute difference between `x1` and `x.true`(the approximate mean absolute ‘error’ in the solution).**
+
+As mentioned in the `solve` documentation, if the second parameter of solve is missing, it is taken to be an identity matrix and solve will return the inverse of the matrix passed as first parameter.
+
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+start <- proc.time()
+A.inv <- solve(A)
+x1 <- A.inv%*%y
+proc.time() - start
+mean(abs(x1 - x.true))
+```
+
+**c. Now use `solve` to directly solve for $x$ without forming $A^{−1}$. Note how long this takes and assess the mean absolute error of the result.**
+
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+start <- proc.time()
+x2 <- solve(A,y)
+proc.time() - start
+mean(abs(x2 - x.true))
+```
+
+**d. What do you conclude?**
+
+The direct solution obtained in point c is not only way faster that the explicit one computed in point b, but also more precise by roughly two orders of magnitude ($e-10$ vs $e-12$)

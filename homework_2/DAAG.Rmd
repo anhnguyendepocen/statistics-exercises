@@ -1,0 +1,134 @@
+---
+title: "Data Analysis and Graphics Using R"
+author: "Gabriele Sarti, Eduardo Gonnelli, Marco Franzon"
+date: "April 10, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+set.seed(42)
+require(RColorBrewer); require(purrr); require(dplyr); 
+library(zoo); library(lattice);library(gridExtra); library(grid)
+require(ggplot2)
+```
+
+## Exercise 3.10
+
+**This  exercise  investigates  simulation  from  other  distributions.  The  statement `x<-rchisq(10, 1)` generates 10 random values from a chi-squared distribution with one degree of freedom. The statement `x <- rt(10, 1)` generates 10 random values from at-distribution with one degree of freedom. Make normal probability plots for samples of various sizes from each of these distributions. How large a sample is necessary, in each instance, to obtain a consistent shape?**
+
+## Exercise 3.11
+
+**The following data represent the total number of aberrant crypt foci (abnormal growths in the colon) observed in seven rats that had been administered a single dose of the carcinogen azoxymethane and sacrificed after six weeks (thanks to Ranjana Bird, Faculty of Human Ecology,University of Manitoba for the use of these data):**
+
+`87 53 72 90 78 85 83`
+
+**Enter these data and compute their sample mean and variance. Is the Poisson model appropriate for these data? To investigate how the sample variance and sample mean differ under the Poisson assumption, repeat the following simulation experiment several times:**
+
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+x <- rpois(7, 78.3)
+mean(x); var(x)
+```
+
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+y <- c(87, 53, 72, 90, 78, 85, 83)
+c(mean=mean(y), var=var(y))
+
+for (i in 1:10) {
+  x <- rpois(7, 78.3)
+  print(paste("Mean: ", mean(x), " Var: ", var(x)))
+}
+```
+
+Variance in observed data is much higher than the one obtained by sampling from a Poisson distribution, thus Poisson model is probably inappropriate to model these data.
+
+## Exercise 3.13
+
+**Markov chain for the weather in a particular season of the year has the transition matrix, from one day to the next:**
+
+$$Pb = 
+\begin{bmatrix}
+        & Sun & Cloud & Rain \\
+  Sun   & 0.6 & 0.2   & 0.2  \\
+  Cloud & 0.2 & 0.4   & 0.4  \\
+  Rain  & 0.4 & 0.3   & 0.3  \\
+\end{bmatrix}
+$$
+
+**It can be shown, using linear algebra, that in the long run this Markov chain will visit the states according to the stationary distribution:**
+
+$$Sun = 0.641, \;Cloud  = 0.208,\; Rain = 0.151$$
+**A result called the ergodic theorem allows us to estimate this distribution by simulating the Markov chain for a long enough time.**
+
+**(a)  Simulate 1000 values, and calculate the proportion of times the chain visits each of the states. Compare the proportions given by the simulation with the above theoretical proportions.**
+
+The stationary distribution is wrong according to DAAG's errata corrige. Real proportions are:
+
+$$Sun = 0.428, \;Cloud  = 0.286,\; Rain = 0.286$$
+
+We use the Markov function given in DAAG exercise 3.12:
+
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+Markov <- function (N=100, initial.value=1, P){
+  X <- numeric(N)
+  X[1] <- initial.value + 1  # States 0:5; subscripts 1:6
+  n <- nrow(P)
+  for (i in 2:N){
+    X[i] <- sample(1:n, size=1, prob=P[X[i-1], ])
+  }
+  X-1
+}
+
+Pb <- matrix(nrow = 3, ncol = 3, byrow = TRUE, data = c(.6,.2,.2,.2,.4,.4,.4,.3,.3),
+             dimnames = list(c("Sun", "Cloud", "Rain"), c("Sun", "Cloud", "Rain")))
+chain <- factor(Markov(1000, 0, Pb), labels = c("Sun", "Cloud", "Rain"))
+table(chain)/length(chain)
+```
+
+We see that simulation results are similar to theoretical proportions. By increasing the simulation size, the result gets approximated even better.
+
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+chain <- factor(Markov(10000, 0, Pb), labels = c("Sun", "Cloud", "Rain"))
+table(chain)/length(chain)
+```
+
+**(b)  Here is code that calculates rolling averages of the proportions over a number of simulations and plots the result. It uses the function `rollmean()` from the zoo package.**
+
+**Try varying the number of simulations and the width of the window. How wide a window is needed to get a good sense of the stationary distribution? This series settles down rather quickly to its stationary distribution (it “burns in” quite quickly). A reasonable width of window is, however, needed to give an accurate indication of the stationary distribution.**
+
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+plotmarkov <- function(n=10000, start=0, window=100, transition=Pb, npanels=5, title){
+  xc2 <- Markov(n, start, transition)
+  mav0 <- rollmean(as.integer(xc2==0), window)
+  mav1 <- rollmean(as.integer(xc2==0), window)
+  npanel <- cut(1:length(mav0), breaks=seq(from=1, to=length(mav0),
+                length=npanels+1), include.lowest=TRUE)
+  df <- data.frame(av0=mav0, av1=mav1, x=1:length(mav0), gp=npanel)
+  print(xyplot(av0+av1 ~ x | gp, data=df, layout=c(1,npanels),
+        type="l", par.strip.text=list(cex=0.65),
+        scales=list(x=list(relation="free")),main = title))
+}
+
+for(n in c(10000,25000,50000))
+  for(ww in c(100,1000,5000)) 
+    plotmarkov(n = n, window = ww, title = paste0(n," simulations with window width = ",ww))
+```
+
+The wider the window, the better to get a good sense of the stationary distribution. This said, even a window in the order to 1000 is enough to show how the series starts to burn in.
+
+## Exercise 4.6
+
+**Here we generate random normal numbers with a sequential dependence structure:**
+
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+y1 <- rnorm(51)
+y <- y1[-1] + y1[-51]
+acf(y1)     # acf is  ‘autocorrelation function’# (see Chapter 9)
+acf(y)
+```
+
+**Repeat this several times. There should be no consistent pattern in the acf plot for different random samples `y1`. There will be a fairly consistent pattern in the acf plot for `y`,a result of the correlation that is introduced by adding to each value the next value in the sequence.**
+
+## Exercise 4.7
+
+**Create a function that does the calculations in the first two lines of the previous exercise. Put the calculation in a loop that repeats 25 times. Calculate the mean and variance for each vector `y` that is returned. Store the 25 means in the vector `av`, and store the 25 variances inthe vector `v`. Calculate the variance of `av`.**

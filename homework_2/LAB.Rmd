@@ -1,0 +1,101 @@
+---
+title: "Laboratory"
+author: "Gabriele Sarti, Eduardo Gonnelli, Marco Franzon"
+date: "April 10, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Exercise 1
+
+**Check the biased nature of $s^2_b$ via MC simulation, generating $n=10$ iid values from a normal distribution. Plot also $s^2$ and comment the difference.**
+
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+set.seed(42)
+
+plot_var_estimators <- function(n, R, sigma){
+  m <- matrix(data=rnorm(n*R, 0, sigma), nrow=n, ncol=R)
+  stat <- array(0, R)
+  stat <- apply(m, 2, var) # Sample variance
+  hist(stat, breaks = 40, probability = TRUE, xlab=expression(s^2), main= bquote(s^2), cex.main=1.5)
+  curve(((n-1)/sigma^2) * dchisq(x*((n-1)/sigma^2), df=n-1), add=TRUE, col="red", lwd=3) # Unbiased var estimator
+  curve(((n)/sigma^2) * dchisq(x*((n)/sigma^2), df=n-1), add=TRUE, col="blue", lwd=3) # Biased var estimator
+}
+
+plot_var_estimators(5, 1000, 1)
+plot_var_estimators(10, 1000, 1)
+plot_var_estimators(200, 1000, 1)
+
+```
+
+We can see how the simulation size has a big impact on the biased estimator $s^2_b$. By growing the simulation size as done in the previous images, we see that the biased estimator $s^2_b$ tends to the values of the unbiased one $s^2$ since the difference between $n$ and $n-1$ in proportion to $n$ tends to vanish.
+
+## Exercise 2
+
+**What happens if a great player decides to join you, now? Try to simulate the data and perform the test again.**
+
+## Exercise 3
+
+**Sometimes it could be useful to assess the degree of association, or correlation, between paired samples, using the Pearson, the Kendall’s $\tau$ or the Spearman’s $\rho$ correlation coefficient. Regardless of the adopted cofficient, the null hypothesis for a given correlation coefficent $\rho$ is:**
+
+$$H_0: \rho = 0$$
+
+**The test statistic is then defined as:**
+
+$$T = r \sqrt{\frac{n- 2}{1 - r^2}}\sim_{H_0} t_{n-2},$$
+
+**where $r = Corr(X,Y)$ is the Pearson correlation coefficient. Suppose to have two samples of the same length $x_1, \dots ,x_n,\;y_1,\dots,y_n$, and to measure the association between them. Once we compute the test statistic $t_{obs}$, we may then compute the $p$-value (here we are evaluating a two sided test) as:**
+
+$$p = 2Pr_{H_0}(T \geq |t_{obs}|)$$
+
+**Consider now some of the most followed Instagram accounts in 2018: for each of the owners, we report also the number of Twitter followers (in milions). Are the Instagram and Twitter account somehow associated? Perform a correlation test, compute the p-value and give an answer. Here is the dataframe.**
+
+
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+Owners <- c( "Katy Perry", "Justin Bieber", "Taylor Swift", "Cristiano Ronaldo", "Kim Kardashian", "Ariana Grande", "Selena Gomez", "Demi Lovato")
+Instagram <- c( 69, 98,107, 123, 110, 118, 135, 67)
+Twitter <- c( 109, 106, 86, 72, 59, 57, 56, 56)
+plot( Instagram, Twitter, pch=21, bg=2, xlim=c(60, 150), ylim=c(40, 120) )
+text( Instagram[-6], Twitter[-6]+5, Owners[-6], cex=0.8 )
+text( Instagram[6], Twitter[6]-5, Owners[6], cex=0.8 )
+```
+
+## Exercise 4
+
+**Compute analitically** $J(γ,γ;y),J(γ,β;y),J(β,β;y)$.
+
+We start from the log likelihood of Weibull distribution:
+
+$$\ell(\gamma;\beta,y) = n\log\gamma - n\gamma\log\beta + \gamma\sum_{i=1}^n\log(y_i) - \sum_{i=1}^n(\frac{y_i}{\beta})^\gamma$$
+
+We first take our first order partial derivatives with respect to $\beta$ and $\gamma$:
+
+$$\frac{\partial\ell}{\partial\beta} = -\frac{n\gamma}{\beta} + \gamma\sum_{i=1}^n\frac{y_i^\gamma}{\beta^{\gamma+1}}$$
+
+$$\frac{\partial\ell}{\partial\gamma} = \frac{n}{\gamma} - n\log\beta + \sum_{i=1}^n\log y_i - \sum_{i=1}^n (\frac{y_i}{\beta})^\gamma\log(\frac{y_i}{\beta})$$
+
+Then, we compute all the second partial derivatives, respectively $\frac{\partial^2\ell}{\partial\beta^2}, \frac{\partial^2\ell}{\partial\gamma^2}$ and $\frac{\partial^2\ell}{\partial\beta\partial\gamma}$. Notice that this last term is the same independently from differentiation order thanks to the symmetry of Hessian matrix.
+
+$$\frac{\partial^2\ell}{\partial\beta^2} = \frac{n\gamma}{\beta^2} + \gamma(\gamma + 1)\sum_{i=1}^n\frac{y_i^\gamma}{\beta^{\gamma+2}}$$
+
+$$\frac{\partial^2\ell}{\partial\gamma^2} = -\frac{n}{\gamma^2} - \sum_{i=1}^n (\frac{y_i}{\beta})^\gamma(\log(\frac{y_i}{\beta}))^2$$
+
+$$\begin{align}
+\frac{\partial^2\ell}{\partial\beta\partial\gamma} = \frac{\partial^2\ell}{\partial\gamma\partial\beta} &= - \frac{n}{\beta} - \sum_{i=1}^n (y_i)^\gamma(-\frac{\gamma}{\beta^{-\gamma-1}})\log(\frac{y_i}{\beta}) + (\frac{y_i}{\beta})^\gamma(-\frac{1}{\beta}) \\
+&= \frac{n}{\beta} - \sum_{i=1}^n \frac{y_i^\gamma}{\beta^{\gamma+1}}(\log(\frac{y_i}{\beta}) - 1)
+\end{align}$$
+
+The observed information matrix has the opposite of the two second-order partial derivatives on the main diagonal and the opposite of the symmetric second-order mixed derivatives on the sides, which are:
+
+$$J(γ,γ;y) = \frac{n}{\gamma^2} + \sum_{i=1}^n (\frac{y_i}{\beta})^\gamma(\log(\frac{y_i}{\beta}))^2$$
+$$J(γ,β;y) = - \frac{n}{\beta} + \sum_{i=1}^n \frac{y_i^\gamma}{\beta^{\gamma+1}}(\log(\frac{y_i}{\beta}) - 1)$$
+$$J(β,β;y) = - \frac{n\gamma}{\beta^2} - \gamma(\gamma + 1)\sum_{i=1}^n\frac{y_i^\gamma}{\beta^{\gamma+2}}$$
+
+## Exercise 5
+
+**Produce the contour plot for the quadratic approximation of the log-likelihood, based on the Taylor series:**
+
+$$\ell(\theta) - \ell(\hat \theta) \simeq -\frac{1}{2}(\theta - \hat\theta)^T J(\hat \theta)(\theta - \hat \theta)$$
