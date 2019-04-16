@@ -7,6 +7,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+set.seed(42)
 ```
 
 ## Exercise 3.3
@@ -25,6 +26,34 @@ for (i in 1:n) {
 ```
 **Confirm that your rewrite is faster but gives the same result.**
 
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+start <- proc.time()
+n <- 100000; z <- rnorm(n)
+zneg <- 0; j <- 1
+for (i in 1:n) {
+    if (z[i]<0) {
+        zneg[j] <- z[i]
+        j <- j + 1
+    }
+}
+time <- proc.time() - start
+print("Base loop timing:")
+time
+
+set.seed(42)
+
+start <- proc.time()
+n <- seq(100000)
+z <- rnorm(n)
+zneg_opt <- z[z < 0]
+time <- proc.time() - start
+print("Efficient rewrite of the loop timing:")
+time
+
+print("Are results equal?")
+all(zneg_opt == zneg)
+```
+
 ## Exercise 3.5
 
 **Consider solving the matrix equation $Ax=y$ for $x$, where $y$ is a known $n$ vector and $A$ is a known $n×n$ matrix. The formal solution to the problem is $x=A^{−1}y$, but it is possible to solve the equation directly, without actually forming $A^{−1}$. This question explores this direct solution. Read the help file for solve before trying it**
@@ -32,7 +61,7 @@ for (i in 1:n) {
 **a. First create an $A,x$ and $y$ satisfying $Ax=y$.**
 
 ```{r echo=TRUE,  message=FALSE, warning=FALSE}
-set.seed(42); n <- 1000
+n <- 1000
 A <- matrix(runif(n*n),n,n); x.true <- runif(n)
 y <- A%*%x.true
 ```

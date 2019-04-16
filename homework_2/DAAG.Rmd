@@ -17,6 +17,18 @@ require(ggplot2)
 
 **This  exercise  investigates  simulation  from  other  distributions.  The  statement `x<-rchisq(10, 1)` generates 10 random values from a chi-squared distribution with one degree of freedom. The statement `x <- rt(10, 1)` generates 10 random values from at-distribution with one degree of freedom. Make normal probability plots for samples of various sizes from each of these distributions. How large a sample is necessary, in each instance, to obtain a consistent shape?**
 
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+par(mfrow=c(2,2))
+for (n in c(10, 20, 50, 100, 250, 500)) {
+  qqnorm(rchisq(n,1), ylim= c(-4,5),main = paste("chisq with n = ", n))
+  qqline(rchisq(n,1), col=4)
+  qqnorm(rt(n,1), ylim= c(-10,10), main = paste("t-student with n = ", n))
+  qqline(rt(n,1), col=4)
+}
+```
+
+In both case the shape becomes consistent with 100 samples.
+
 ## Exercise 3.11
 
 **The following data represent the total number of aberrant crypt foci (abnormal growths in the colon) observed in seven rats that had been administered a single dose of the carcinogen azoxymethane and sacrificed after six weeks (thanks to Ranjana Bird, Faculty of Human Ecology,University of Manitoba for the use of these data):**
@@ -34,13 +46,19 @@ mean(x); var(x)
 y <- c(87, 53, 72, 90, 78, 85, 83)
 c(mean=mean(y), var=var(y))
 
-for (i in 1:10) {
-  x <- rpois(7, 78.3)
-  print(paste("Mean: ", mean(x), " Var: ", var(x)))
-}
+R <- 10000
+n <- 7
+lambda <- 78.3
+
+y <- matrix(rpois(n*R, lambda), R, n)
+means <- apply(y, 1, mean)
+vars <- apply(y, 1, var)
+
+hist(vars, breaks=50, main = paste("Poisson's variances histogram with lambda = ", lambda))
+hist(means, breaks=50, main = paste("Poisson's means histogram with lambda = ", lambda))
 ```
 
-Variance in observed data is much higher than the one obtained by sampling from a Poisson distribution, thus Poisson model is probably inappropriate to model these data.
+It could be noticed that the average Poisson variance is approximately 75, while sample variance is more than twice that value, at 159.90. We can take this result as an indication that the specified Poisson model is probably inappropriate to model these data.
 
 ## Exercise 3.13
 
@@ -129,6 +147,36 @@ acf(y)
 
 **Repeat this several times. There should be no consistent pattern in the acf plot for different random samples `y1`. There will be a fairly consistent pattern in the acf plot for `y`,a result of the correlation that is introduced by adding to each value the next value in the sequence.**
 
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+par(mfrow=c(1,2))
+for(i in seq(1:5)){
+  y1 <- rnorm(51)
+  acf(y1)
+  y <- y1[-1] + y1[-51]
+  acf(y)
+}
+```
+
+The dependency introduced when building `y` is evident from the plots, since all values are fairly close to the previous ones, while the same is not true for values in `y1`.
+
 ## Exercise 4.7
 
 **Create a function that does the calculations in the first two lines of the previous exercise. Put the calculation in a loop that repeats 25 times. Calculate the mean and variance for each vector `y` that is returned. Store the 25 means in the vector `av`, and store the 25 variances inthe vector `v`. Calculate the variance of `av`.**
+
+``` {r echo=TRUE,  message=FALSE, warning=FALSE}
+rnd_dep <- function(n = 51) {
+  y1 <- rnorm(n)
+  y <- y1[-1] + y1[-n]
+}
+
+av <- numeric(25)
+v <- numeric(25)
+
+for (i in 1:25) {
+  y <- rnd_dep()
+  av[i] <- mean(y)
+  v[i] <- var(y)
+}
+
+var(av)
+``` 
