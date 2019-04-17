@@ -6,7 +6,6 @@ output:
   html_document:
     toc: true
     toc_depth: 2
-    theme: united
     highlight: tango
 ---
 
@@ -35,6 +34,8 @@ for (i in 1:n) {
 **Confirm that your rewrite is faster but gives the same result.**
 
 ```{r echo=TRUE,  message=FALSE, warning=FALSE}
+set.seed(42)
+
 start <- proc.time()
 n <- 100000; z <- rnorm(n)
 zneg <- 0; j <- 1
@@ -99,7 +100,7 @@ mean(abs(x2 - x.true))
 
 **d. What do you conclude?**
 
-The direct solution obtained in point c is not only way faster that the explicit one computed in point b, but also more precise by roughly two orders of magnitude ($e-10$ vs $e-12$)
+The direct solution obtained in point c is not only way faster that the explicit one computed in point b, but also more precise by roughly two orders of magnitude ($e-11$ vs $e-13$)
 
 # Data Analysis and Graphics Using R
 
@@ -117,7 +118,7 @@ for (n in c(10, 20, 50, 100, 250, 500)) {
 }
 ```
 
-In both case the shape becomes consistent with 100 samples.
+In both case the shape becomes roughly consistent with 250 samples.
 
 ## Exercise 3.11
 
@@ -337,8 +338,6 @@ chisq.test(observed_matrix, p = c( 7/16, 5/16, 3/16, 1/16))
 
 The p-value correctly indicates that our performance uniformity hypothesis is misplaced in presence of a pro player.
 
-*In this case we introduce a very well player. Otherwise, the result suggests that there is not independence even if the p-value is less then the previous case.*
-
 ## Exercise 3
 
 **Sometimes it could be useful to assess the degree of association, or correlation, between paired samples, using the Pearson, the Kendall’s $\tau$ or the Spearman’s $\rho$ correlation coefficient. Regardless of the adopted cofficient, the null hypothesis for a given correlation coefficent $\rho$ is:**
@@ -397,20 +396,21 @@ $$\frac{\partial\ell}{\partial\gamma} = \frac{n}{\gamma} - n\log\beta + \sum_{i=
 
 Then, we compute all the second partial derivatives, respectively $\frac{\partial^2\ell}{\partial\beta^2}, \frac{\partial^2\ell}{\partial\gamma^2}$ and $\frac{\partial^2\ell}{\partial\beta\partial\gamma}$. Notice that this last term is the same independently from differentiation order thanks to the symmetry of Hessian matrix.
 
-$$\frac{\partial^2\ell}{\partial\beta^2} = \frac{n\gamma}{\beta^2} + \gamma(\gamma + 1)\sum_{i=1}^n\frac{y_i^\gamma}{\beta^{\gamma+2}}$$
+$$\frac{\partial^2\ell}{\partial\beta^2} = \frac{n\gamma}{\beta^2} - \gamma(\gamma + 1)\sum_{i=1}^n\frac{y_i^\gamma}{\beta^{\gamma+2}}$$
 
 $$\frac{\partial^2\ell}{\partial\gamma^2} = -\frac{n}{\gamma^2} - \sum_{i=1}^n (\frac{y_i}{\beta})^\gamma(\log(\frac{y_i}{\beta}))^2$$
 
 $$\begin{align}
-\frac{\partial^2\ell}{\partial\beta\partial\gamma} = \frac{\partial^2\ell}{\partial\gamma\partial\beta} &= - \frac{n}{\beta} - \sum_{i=1}^n (y_i)^\gamma(-\frac{\gamma}{\beta^{-\gamma-1}})\log(\frac{y_i}{\beta}) + (\frac{y_i}{\beta})^\gamma(-\frac{1}{\beta}) \\
-&= \frac{n}{\beta} - \sum_{i=1}^n \frac{y_i^\gamma}{\beta^{\gamma+1}}(\log(\frac{y_i}{\beta}) - 1)
-\end{align}$$
+\frac{\partial^2\ell}{\partial\beta\partial\gamma} = \frac{\partial^2\ell}{\partial\gamma\partial\beta} &= - \frac{n}{\beta} - \sum_{i=1}^n \frac{(y_i)^\gamma(-\gamma)}{\beta^{\gamma+1}})\log(\frac{y_i}{\beta}) + (\frac{y_i}{\beta})^\gamma(-\frac{1}{\beta}) \\
+&= - \frac{n}{\beta} + \sum_{i=1}^n \frac{y_i^\gamma}{\beta^{\gamma+1}}(\gamma\log(\frac{y_i}{\beta}) + 1)
+\end{align}
+$$
 
 The observed information matrix has the opposite of the two second-order partial derivatives on the main diagonal and the opposite of the symmetric second-order mixed derivatives on the sides, which are:
 
 $$J(γ,γ;y) = \frac{n}{\gamma^2} + \sum_{i=1}^n (\frac{y_i}{\beta})^\gamma(\log(\frac{y_i}{\beta}))^2$$
-$$J(γ,β;y) = - \frac{n}{\beta} + \sum_{i=1}^n \frac{y_i^\gamma}{\beta^{\gamma+1}}(\log(\frac{y_i}{\beta}) - 1)$$
-$$J(β,β;y) = - \frac{n\gamma}{\beta^2} - \gamma(\gamma + 1)\sum_{i=1}^n\frac{y_i^\gamma}{\beta^{\gamma+2}}$$
+$$J(γ,β;y) = \frac{n}{\beta} - \sum_{i=1}^n \frac{y_i^\gamma}{\beta^{\gamma+1}}(\gamma\log(\frac{y_i}{\beta}) + 1)$$
+$$J(β,β;y) = - \frac{n\gamma}{\beta^2} + \gamma(\gamma + 1)\sum_{i=1}^n\frac{y_i^\gamma}{\beta^{\gamma+2}}$$
 
 ## Exercise 5
 
