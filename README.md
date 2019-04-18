@@ -40,7 +40,7 @@ In this section are listed the homeworks assigned from the previously cited sour
 
 ### Homework 2
 
-* **Due date:** April, Tuesday 7th 2019
+* **Due date:** April, Friday 19th 2019
 
 * **Group:** Group G
 
@@ -63,7 +63,7 @@ In this section are listed the homeworks assigned from the previously cited sour
 
 ### Homework 3
 
-* **Due date:** May, Friday 19th 2019
+* **Due date:** May, Tuesday 7th 2019
 
 * **Group:** Group E
 
