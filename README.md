@@ -10,13 +10,15 @@ This repository contains the homeworks for the course **"Statistical Methods for
 
 * [Laboratory sessions](https://moodle2.units.it/course/view.php?id=4049) held in class, here referred to as **LAB** (You should have access to UniTS Moodle to follow the link).
 
+* Theoretical lectures, here referred to as **LEC**.
+
 ## Homeworks
 
 In this section are listed the homeworks assigned from the previously cited sources, alongside the group name, team composition and work division. Even though homeworks were splitted between team members to make their completion faster, they are reviewed entirely by all team members in order to ensure their correctness.
 
 ### Homework 1
 
-* **Due date:** March, Fridat 29th 2019
+* **Due date:** March, Friday 29th 2019
 
 * **Group:** Group C
 
@@ -38,7 +40,7 @@ In this section are listed the homeworks assigned from the previously cited sour
 
 ### Homework 2
 
-* **Due date:** April, Friday 19th 2019
+* **Due date:** April, Tuesday 7th 2019
 
 * **Group:** Group G
 
@@ -57,3 +59,30 @@ In this section are listed the homeworks assigned from the previously cited sour
 | Gabriele Sarti   | 3.13      | 3.5 | 1, 4 |
 | Marco Franzon    | 3.10, 4.6 | /   | 2, 5 |
 | Eduardo Gonnelli | 3.11, 4.7 | 3.3 | 3    |
+
+
+### Homework 3
+
+* **Due date:** May, Friday 19th 2019
+
+* **Group:** Group E
+
+* **Members:** Michela Venturini, Gabriele Sarti, Rabindra Khadka
+
+* **Sources:**
+
+  * LEC:
+
+    * Compute the bootstrap-based confidence interval for the score dataset using the studentized method.
+
+    * Compute bootstrap-based confidence intervals for the score dataset using the boot package.
+
+    (For both 1 and 2, refer to the theoretical lecture about bootstrap.)
+    
+  * LAB 3 from 1 to 11
+
+|                   | LEC | LAB         |
+|-------------------|-----|-------------|
+| Michela Venturini | 1   | 2, 5, 8     |
+| Gabriele Sarti    | 2   | 3, 6, 9, 11 |
+| Rabindra Khadka   | /   | 1, 4, 7, 10 |
