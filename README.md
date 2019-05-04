@@ -16,7 +16,7 @@ This repository contains the homeworks for the course **"Statistical Methods for
 
 In this section are listed the homeworks assigned from the previously cited sources, alongside the group name, team composition and work division. Even though homeworks were splitted between team members to make their completion faster, they are reviewed entirely by all team members in order to ensure their correctness.
 
-### Homework 1
+### Homework 1 - Grade: A
 
 * **Due date:** March, Friday 29th 2019
 
@@ -38,7 +38,7 @@ In this section are listed the homeworks assigned from the previously cited sour
 | Katja Valjavec       | 6, 13, 20 | 1.6      | 1, 4, 7 |
 | Leticia Negrao Pinto | 11, 15    | 1.1, 1.8 | 2, 5, 8 |
 
-### Homework 2
+### Homework 2 - Grade: B
 
 * **Due date:** April, Friday 19th 2019
 
@@ -61,7 +61,7 @@ In this section are listed the homeworks assigned from the previously cited sour
 | Eduardo Gonnelli | 3.11, 4.7 | 3.3 | 3    |
 
 
-### Homework 3
+### Homework 3 - Current
 
 * **Due date:** May, Tuesday 7th 2019
 
