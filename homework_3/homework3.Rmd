@@ -13,6 +13,8 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 set.seed(42)
 library(rstan); library(boot); library(bayesplot)
+library(ggplot2); library("MASS"); library(LearnBayes)
+rstan_options(auto_write = TRUE)
 ```
 
 # Lectures
@@ -21,8 +23,83 @@ library(rstan); library(boot); library(bayesplot)
 
 **Compute the bootstrap-based confidence interval for the `score` dataset using the studentized method.**
 
-```{r echo=TRUE,  message=FALSE, warning=FALSE}
+The `score` dataset was found [here](https://web.stanford.edu/~hastie/CASI_files/DATA/student_score.txt).
 
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+score <- read.table("student_score.txt",header = TRUE)
+
+# Parameter of interest PSI
+# The parameter of interest is the eigenratio statistic for the correlation
+# matrix of student_score: PSI = largest eigenvalue/sum eigenvalues:
+
+psi_fun <- function(data) {
+  eig <- eigen(cor(data))$values
+  return(max(eig) / sum(eig))
+}
+
+# Observed value
+psi_obs <- psi_fun(score)
+
+# Compute confidence intervals
+n <- length(score[,1]); B <- 10^4
+
+s_aux <- rep(0,n)
+s_vect <- rep(0, B)
+SE_jack <- rep(0, B)
+
+for(i in 1:B){
+  ind <- sample(1:n, n, replace = TRUE)
+  s_vect[i] <- psi_fun(score[ind,])
+  
+  for(j in 1:n) s_aux[j] <- psi_fun(score[ind,][-j,]) # Sample without j-th obs
+  
+  SE_jack[i] <- sqrt(((n - 1)/n) * sum((s_aux - mean(s_aux))^2))
+}
+
+SE_boot <- sd(s_vect)
+psi_obs + c(-1, 1) * 1.96 * SE_boot
+
+# Studentized bootstrap confidence interval
+z<-(s_vect - psi_obs)/SE_jack
+studentized_ci <- psi_obs - quantile(z, prob=c(0.975, 0.025))*SE_boot
+studentized_ci
+
+# Percentile method
+perc_ci <- quantile(s_vect, prob=c(0.025, 0.975))
+attr(perc_ci, "names") <- NULL
+perc_ci
+
+# Basic method
+basic_ci <- 2 * psi_obs - quantile(s_vect, prob=c(0.975, 0.025))
+attr(basic_ci, "names") <- NULL
+basic_ci
+
+Intervals<-c("Basic CI", "Perc CI", "Stud CI")
+data <- data.frame(basic_ci, perc_ci, studentized_ci)
+data <- data.frame(t(data), Intervals)
+
+ggplot(data, aes(x=Intervals, color = Intervals)) +
+  ggtitle("Plot of Confidence Intervals") +
+  xlab("Confidence Intervals") + ylab(" ") +
+  geom_errorbar( aes(x=data$Intervals, ymin=data$X2.5., ymax=data$X97.5.), width=0.4, alpha=0.9, size=1.3)+
+  geom_abline(slope = 0, intercept = psi_obs, colour = "red", linetype = 2, size=1)+
+  geom_text(aes(x = 2.5, y = .705, label = "PSI-observed"), colour = "red")
+
+data <- data.frame(s_vect)
+ggplot(data, aes(x=s_vect, y=..ncount..))+
+  xlab("s_vect")+ ylab("Density") + 
+  geom_histogram(binwidth = .005, fill="light grey") +
+  geom_segment(aes(x = psi_obs , y = 1, xend = psi_obs, yend = 0), col=2) +
+  geom_text(aes(x = .75, y = .9, label = "PSI-observed"), colour = "red") +
+  geom_segment(aes(x = basic_ci[1] , y = 1, xend = basic_ci[1], yend = 0), col=3) +
+  geom_segment(aes(x = basic_ci[2] , y = 1, xend = basic_ci[2], yend = 0), col=3)  +
+  geom_text(aes(x = .4, y = .75, label = "Basic CI"), colour = 3) +
+  geom_segment(aes(x = perc_ci[1] , y = 1, xend = perc_ci[1], yend = 0), col=4) +
+  geom_segment(aes(x = perc_ci[2] , y = 1, xend = perc_ci[2], yend = 0), col=4) +
+  geom_text(aes(x = .4, y = .50, label = "Percentile CI"), colour = 4) +
+  geom_segment(aes(x = studentized_ci[1] , y = 1, xend = studentized_ci[1], yend = 0), col=5) +
+  geom_segment(aes(x = studentized_ci[2] , y = 1, xend = studentized_ci[2], yend = 0), col=5) +
+  geom_text(aes(x = .4, y = .25, label = "Studentized CI"), colour = 6)
 ```
 
 ## Exercise 2
@@ -32,15 +109,30 @@ library(rstan); library(boot); library(bayesplot)
 The `score` dataset was found [here](https://web.stanford.edu/~hastie/CASI_files/DATA/student_score.txt).
 
 ```{r echo=TRUE,  message=FALSE, warning=FALSE}
-psi_fun <-function(data, id) {
+psi_fun_boot <-function(data, id) {
   d <- data[id,]
   eig <- eigen(cor(d))$values
   return(max(eig)/ sum(eig))
 }
 
-score <-read.table("student_score.txt", header = TRUE)
-psi_boot <- boot(data = score, statistic = psi_fun, R=1000)
-boot.ci(boot.out = psi_boot, type = c("norm", "basic", "perc"))
+psi_boot <- boot(data = score, statistic = psi_fun_boot, R=10^4)
+boot.ci(boot.out = psi_boot, type = c("basic", "perc"))
+
+n <- length(score[,1])
+
+psi_fun_boot_var <-function(data, id) {
+  d <- data[id,]
+  s_aux <- rep(0, n)
+  SE_jack <- rep(0, 10^4)
+  for (j in 1:n) s_aux[j] <- psi_fun(d[-j,])
+  SE_jack[id] <- ((n - 1)/n) * sum((s_aux - mean(s_aux))^2)
+  eig <- eigen(cor(d))$values
+  out <- max(eig)/ sum(eig)
+  return(c(out, SE_jack))
+}
+
+psi_boot_var <- boot(data = score, statistic = psi_fun_boot_var, R = 10^4)
+boot.ci(psi_boot_var, type = "stud")
 ```
 
 # Laboratory
@@ -52,7 +144,9 @@ boot.ci(boot.out = psi_boot, type = c("norm", "basic", "perc"))
 Having stored our data in `y`, `log_lik_weibull` is our log-likelihood function which takes two parameters, namely `data` and `param`. The latter is the name of the parameter vector, while the former is the name of the data object.
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
-y <- c(155.9, 200.2, 143.8, 150.1,152.1, 142.2, 147, 146, 146, 170.3, 148, 140, 118, 144, 97)
+#Sample.
+y <- c(155.9, 200.2, 143.8, 150.1,152.1, 142.2, 147, 146, 146,
+ 170.3, 148, 140, 118, 144, 97)
 n <- length(y)
 
 log_lik_weibull <- function( data, param){
@@ -104,7 +198,71 @@ $$\hat \gamma \pm z_{1−\alpha/2}j_P(\hat \gamma)^{−1/2}$$
 **Compute the Wald confidence interval of level 0.95 and plot the results.**
 
 ```{r echo=TRUE,  message=FALSE, warning=FALSE}
+#Define log-likelihood profile:
+# - beta is empirically defined on the basis of a gamma grid
+# - beta.gamma is plugged in the log likelihood function 
+log_lik_weibull_profile_gamma  <- function(data, gamma){
+  beta.gamma <- mean(data^gamma)^(1/gamma)
+  log_lik_weibull( data, c(gamma, beta.gamma) )
+}
 
+log_lik_weibull_profile_gamma_v <-Vectorize(log_lik_weibull_profile_gamma, 'gamma'  )
+
+conf.level<-0.95
+
+# MLE estimation using profile log likelihood with beta as nuisance parameter
+weib.y.mle<-optim(1 ,fn=log_lik_weibull_profile_gamma,hessian=T,
+                  method='L-BFGS-B',lower=rep(1e-7,2),
+                  upper=rep(Inf,2),data=y)
+
+#Compute Wald CI
+# 1. Compute SE by using the Hessian Matrix obtained by the MLE 
+# estimation previously performed.
+weib.y.se<-sqrt(diag(solve(weib.y.mle$hessian)))
+
+# 2. Compute the two extremes of Wald CI.
+wald.ci1<-weib.y.mle$par[1]+c(-1,1)*qnorm(1-(1-conf.level)/2)*weib.y.se[1]
+wald.ci1
+
+#Plot values for Profile ML with beta as nuisance parameter.
+plot(function(x) -log_lik_weibull_profile_gamma_v(data=y, x)+weib.y.mle$value,
+     from=0.1,to=15,xlab=expression(gamma),
+     ylab='profile relative log likelihood',ylim=c(-8,0))
+
+segments( wald.ci1[1], -log_lik_weibull_profile_gamma_v(y,wald.ci1[1])-weib.y.mle$value,
+          wald.ci1[1], -log_lik_weibull_profile_gamma_v(y, wald.ci1[1])+weib.y.mle$value, 
+          col="blue", lty=2)
+
+segments( wald.ci1[2],
+          -log_lik_weibull_profile_gamma_v(y,wald.ci1[2])-weib.y.mle$value, wald.ci1[2], -log_lik_weibull_profile_gamma_v(y, wald.ci1[2])+weib.y.mle$value, 
+          col="blue", lty=2 )
+
+segments(  wald.ci1[1], -7,  wald.ci1[2], -7, col="blue", lty =1, lwd=2)
+points(wald.ci1[1], -qchisq(0.95,1)/2, pch=16, col="blue", cex=1.5)
+points(wald.ci1[2], -qchisq(0.95,1)/2, pch=16, col="blue", cex=1.5)
+abline(h=-qchisq(conf.level,1)/2,lty='dashed',col="blue")
+abline(v=weib.y.mle$par[1], col=5, lwd=1, lty=2)
+text(9.5, -1, "MLE for Gamma", col=5)
+text(7,-6,"95% Wald CI",col="blue")
+
+#Comparison with Deviance CI.
+conf.level<-0.95
+lrt.ci1<-uniroot(function(x) -log_lik_weibull_profile_gamma_v(y, x)+
+                    weib.y.mle$value+
+                    qchisq(conf.level,1)/2,
+                  c(1e-7,weib.y.mle$par[1]))$root
+ lrt.ci1<-c(lrt.ci1,uniroot(function(x) -log_lik_weibull_profile_gamma_v(y,x)+
+                              weib.y.mle$value+
+                              qchisq(conf.level,1)/2,
+                            c(weib.y.mle$par[1],15))$root)
+ segments( lrt.ci1[1],-qchisq(conf.level,1)/2, lrt.ci1[1],
+           -log_lik_weibull_profile_gamma_v(y, lrt.ci1[1]), col="red", lty=2  )
+ segments( lrt.ci1[2],-qchisq(conf.level,1)/2, lrt.ci1[2],
+           -log_lik_weibull_profile_gamma_v(y, lrt.ci1[2]), col="red", lty=2  )
+ segments( lrt.ci1[1],
+           -8.1, lrt.ci1[2],
+           -8.1, col="red", lty =1, lwd=2  )
+ text(7,-7.5,"95% Deviance CI",col=2)
 ```
 
 ## Exercise 3
@@ -116,38 +274,48 @@ Since $\gamma$ is not expressed in function of $\beta$, we simply fix the value 
 $$\{\beta: \ell_P(\beta) \geq \ell_P(\hat \beta) - \frac{1}{2}\chi^2_{1;1-\alpha}\}$$
 
 ```{r echo=TRUE,  message=FALSE, warning=FALSE}
-weib.y.mle<-optim(c(1,1),fn=log_lik_weibull,hessian=T, method='L-BFGS-B',lower=rep(1e-7,2),  upper=rep(Inf,2),data=y)
-
 gamma <- seq(0.1, 15, length=100)
 beta <- seq(100,200, length=100)
 
+#Use optim to compute log likelihood for gamma and beta. 
+#L-BFGS-B method uses a limited-memory modification of the 
+#BFGS quasi-Newton method which allows box constraints, 
+#that is each variable can be given a lower and/or upper bound. 
+#The initial value must satisfy the constraints.
+weib.y.mle<-optim(c(1,1),fn=log_lik_weibull,hessian=T,
+                  method='L-BFGS-B',lower=rep(1e-7,2),
+                  upper=rep(Inf,2),data=y)
+#The first element is the MLE estimation for the shape(gamma) and 
+#the second for the scale (beta):
+weib.y.mle$par
+
 log_lik_weibull_profile_beta <- function(data, beta) {
-  gamma.beta <- uniroot(function(x) n/x+sum(log(data))-n*sum(data^x*log(data))/sum(data^x), c(1e-5,15))$root
+  gamma.beta <- uniroot(function(x) n/x - n * log(beta) + sum(log(data)) - sum((data/beta)^x * log(data/beta)), c(1e-5,15))$root
   log_lik_weibull(data, c(gamma.beta, beta))
 }
 
 log_lik_weibull_profile_beta_vec <-Vectorize(log_lik_weibull_profile_beta, 'beta')
 
-plot(function(x) -log_lik_weibull_profile_beta_vec(data=y, x) + weib.y.mle$value, from=120,to=200, xlab=expression(beta), ylab='profile relative log likelihood', ylim=c(-10,0))
+plot(function(x) -log_lik_weibull_profile_beta_vec(data=y, x) + weib.y.mle$value, from=120,to=200, xlab=expression(beta),
+     ylab='profile relative log likelihood', ylim=c(-10,0))
 
 conf.level<-0.95
-
 abline(h=-qchisq(conf.level,1)/2, lty='dashed', col=2)
+lrt.ci1 <- uniroot(function(x) -log_lik_weibull_profile_beta_vec(y, x) + weib.y.mle$value 
+                   + qchisq(conf.level, 1)/2, c(1e-7, weib.y.mle$par[2]))$root
 
-lrt.ci1 <- uniroot(function(x) -log_lik_weibull_profile_beta_vec(y, x) + weib.y.mle$value + qchisq(conf.level, 1)/2, c(1e-7, weib.y.mle$par[2]))$root
+lrt.ci1 <- c(lrt.ci1,uniroot(function(x) -log_lik_weibull_profile_beta_vec(y,x) + weib.y.mle$value 
+                             + qchisq(conf.level,1)/2, c(weib.y.mle$par[2],200))$root)
 
-lrt.ci1 <- c(lrt.ci1,uniroot(function(x) -log_lik_weibull_profile_beta_vec(y,x) + weib.y.mle$value + qchisq(conf.level,1)/2, c(weib.y.mle$par[2],200))$root)
+segments( lrt.ci1[1],-qchisq(conf.level,1)/2, lrt.ci1[1], -log_lik_weibull_profile_beta_vec(y, lrt.ci1[1]),
+          col="red",lty=2)
 
-segments( lrt.ci1[1],-qchisq(conf.level,1)/2, lrt.ci1[1], -log_lik_weibull_profile_beta_vec(y, lrt.ci1[1]), col="red", lty=2)
-
-segments( lrt.ci1[2], -qchisq(conf.level,1)/2, lrt.ci1[2], -log_lik_weibull_profile_beta_vec(y, lrt.ci1[2]), col="red", lty=2)
+segments( lrt.ci1[2], -qchisq(conf.level,1)/2, lrt.ci1[2], -log_lik_weibull_profile_beta_vec(y, lrt.ci1[2]),
+          col="red", lty=2)
 
 points(lrt.ci1[1], -qchisq(0.95,1)/2, pch=16, col=2, cex=1.5)
-
 points(lrt.ci1[2], -qchisq(0.95,1)/2, pch=16, col=2, cex=1.5)
-
 segments(lrt.ci1[1], -10, lrt.ci1[2], -10, col="red", lty =1, lwd=2)
-
 text(157, -9.5, "95% Deviance CI", col=2, cex=0.8)
 ```
 
@@ -168,7 +336,7 @@ We first perform the likelihood ratio test: the hypothesis that  $\alpha = 1$ is
 ```{r echo=TRUE,  message=FALSE, warning=FALSE}
  log_lik_exp <- function(data, param){
    beta.gamma <- mean(data^param)^(1/param)
-  -sum(dexp(data, beta.gamma, log=TRUE))
+  -sum(dexp(data, 1/beta.gamma, log=TRUE))
 }
  
 #Maximized log likelihood under the null hypothesis.
@@ -207,7 +375,7 @@ p_lrt <- pchisq(lambda_lrt, df =1, lower.tail = FALSE)
 p_lrt
 ```
 
-From above result, we can observe that the associated p-value is 0.00,so we reject $H_0$ at the 5% siginificance level. 
+From above result, we can observe that the associated p-value `p_lrt` is very small, so we reject $H_0$ at the 5% siginificance level. 
 
 The Wald test statistic has the form  $ W_e(\gamma_o)=\hat{\gamma}-\gamma_o/SE(\hat\gamma)^2$  which follows Chi-square distribution with 1 degree of freedom. The Wald test statistics can be obtained as below:
 
@@ -236,6 +404,16 @@ The two tests performed above are asymtotically equivalent and both rejects the 
 $$1)\;\;\mu^*=\bar y - \dots \\
 2)\;\;\mu^* = \mu + \dots
 $$
+
+$$1.\;\; \mu^* = \overline{y}-\frac{\frac{1}{\tau^2}(\overline{y}-\mu)}{\frac{n}{\sigma^2}+\frac{1}{\tau^2}}$$.
+
+From this formulation we can deduce that for $n \rightarrow \inf$ the Posterior mean $\mu^*$ coincides with the sample mean $\overline{y}$.
+
+$$2. \;\; \mu^* = \mu + \frac{\frac{n}{\sigma^2}(\overline{y}-\mu)}{\frac{n}{\sigma^2}+\frac{1}{\tau^2}} = \mu + \frac{(\overline{y}-\mu)}{1+\frac{\sigma^2}{\tau^2n}}$$
+
+Also in this case we can deduce that for $n \rightarrow \inf$ the Posterior mean $\mu^*$ coincides with the sample mean $\overline{y}$.
+
+From both representations, the Posterior mean can be seen as the prior mean/ MLE $\overline{y}$ with an adjustement depending on a weighted difference of the two. In particular, we can say that, as the size of the sample increases the prior mean $\mu^*$ loses importance in the determination of the Posterior mean $\mu^*$. We can also observe that if the variance of the prior $\tau^2$ is large the prior becomes uninformative and thus the prior mean has less influence on th e posterior.
 
 ## Exercise 6
 
@@ -298,9 +476,6 @@ posterior <- as.array(fit)
 Here we use the `bayesplot` package that provides us with different plotting functions for visulaizing Markov chain Monte Carlo(MCMC) draws from the posterior distribution of the parameters of a Bayesian model.
 
 ```{r echo=TRUE,  message=FALSE, warning=FALSE}
-library("bayesplot")
-library("ggplot2")
-
 #checking the dimension
 dim(posterior)
 dimnames(posterior)
@@ -315,7 +490,7 @@ color_scheme_set("red")
 mcmc_intervals(posterior, pars = c("theta"))
 ```
 
-Fig 7.1: Depicts the uncertainity interval of parameter theta computed from posterior draws with all chains merged. The circle point in the above figure is the posterior medians. Credible interval is based on the quantiles of the posterior distribution. By default the thick segments covers 50% intervals and the thinner outer lines covers 90% interval. So, given the data the 90% bayesian posterior credible interval includes the true `theta` with probabilty 0.9.
+Figure depicts the uncertainity interval of parameter theta computed from posterior draws with all chains merged. The circle point in the above figure is the posterior medians. Credible interval is based on the quantiles of the posterior distribution. By default the thick segments covers 50% intervals and the thinner outer lines covers 90% interval. So, given the data the 90% bayesian posterior credible interval includes the true `theta` with probabilty 0.9.
 
 * **Plotting posterior area. **
 
@@ -332,7 +507,7 @@ mcmc_areas(
  )
 ```
 
-Fig 7.2: Depicts the density plots computed from posterior draws with all chains merged. The shaded area under the curve is the uncertainity interval. The plot suggests that probability of `theta` being a member of 80% credible interval is 0.8. The plot also shows the best estimate (mean) of theta around 2.9.
+Figure depicts the density plots computed from posterior draws with all chains merged. The shaded area under the curve is the uncertainity interval. The plot suggests that probability of `theta` being a member of 80% credible interval is 0.8. The plot also shows the best estimate (mean) of theta around 2.9.
 
 
 * **marginal posterior distributions for the parameters.**
@@ -342,7 +517,7 @@ color_scheme_set("green")
 mcmc_hist(posterior, pars = c("theta"))
 ```
 
-Fig 7.3: Depicts the marginal posterior distribution for parameter of interest `theta`. The histogram indicates the number of times different value of `theta` was sampled from the posterior.
+Figure depicts the marginal posterior distribution for parameter of interest `theta`. The histogram indicates the number of times different value of `theta` was sampled from the posterior.
 
 ## Exercise 8
 
@@ -355,6 +530,52 @@ Fig 7.3: Depicts the marginal posterior distribution for parameter of interest `
 **3. $\pi(\lambda) = \text{Gamma}(4,2)$**
 
 **Now, compute your posterior as $\pi(\lambda|y) \propto L(\lambda;y)\pi(\lambda)$ for the selected prior. If your first choice was correct, you will be able to compute it analitically.**
+
+The **Beta distribution** can be excluded immediately because it is defined in the interval $[0,1]$ and this problem concerns all the positive values since the posterior refers to the averege length of phone calls.
+
+The **Normal distribution** can be excluded because it refers to the interval of all real numbers while we are interested in the positive numbers only.
+
+The **Gamma distribution** seems to fit reasonably our problem and it is also the conjugate prior of the Poisson distribution so we can compute analitically the posterior. 
+
+The **likelihood** is $$	L(\lambda|x)= \prod_{i=1}^{n}{\frac{e^{-\lambda}\lambda^{x_i}}{x_i!}}=\frac{e^{-\lambda}\lambda^{\sum{x_i}}}{\prod_{i=1}^{n}{x_i!}}$$
+
+The **prior** is $$	p(\lambda) = \frac{\beta^\alpha}{\Gamma(\alpha)}\lambda^{\alpha-1}e^{-\beta\lambda}$$
+
+Then the **posterior** becomes $$\pi(\lambda|x) \propto \lambda^{\sum{x_i+\alpha-1}}e^{-(n+\beta)\lambda}$$
+that is a Gamma distribution
+$\pi(\lambda|y) = \text{Gamma}(\sum{y_i}+\alpha, n+\beta)$ with $\alpha=4$ , $n=15$ and $\beta=2$.
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+lambda.grid=seq(0,30,.1)
+n=15;
+
+y = rpois(n, lambda.grid);
+lik <- function(lg,y){
+  prod(dpois(y,lg))
+}
+
+#likelihood distribution
+likel = sapply(lambda.grid, lik, y=y)/sum(sapply(lambda.grid, lik, y=y))
+#prior distribution
+prior = dgamma(lambda.grid, 4, rate=2)
+## 1
+posterior_true = (prior*likel)/sum(prior*likel)
+## 2
+alpha=sum(y)+4; beta=n+2
+posterior_theoric = dgamma(lambda.grid,shape = alpha, rate = beta)
+#plot distributions
+corr = mean(posterior_theoric)/ mean(posterior_true)
+
+plot(lambda.grid,prior, xlim= c(0,4), ylim=c(0,2), xlab = expression(lambda), 
+     ylab = "Density", main = "Density Plot",col = "red", type = "l")
+lines(lambda.grid,posterior_true*corr, col = "blue", lty=2,lwd=3)
+lines(lambda.grid,posterior_theoric, col = "green")
+
+legend("topright", col =c("red", "green", "blue" ), 
+       c("Prior", "Theoretical Posterior", 
+         "Actual Posterior"), lty=c(1,1,2),lwd=c(1,1,3), cex=1)
+
+```
+From the plot we can deduce that the Theoretical posterior coincides with the posterior obtained as the product of likelihood and prior. 
 
 ## Exercise 9
 
@@ -371,6 +592,12 @@ Fig 7.3: Depicts the marginal posterior distribution for parameter of interest `
 We are assuming a uniform prior for parameter $\sigma$ such that $\sigma \sim \text{Unif}(0.1, 10)$.
 
 ```{r echo=TRUE,  message=FALSE, warning=FALSE}
+# Same variables from exercise 6
+n <- 10
+theta_sample <- 2
+sigma2 <- 2
+y <- rnorm(n,theta_sample, sqrt(sigma2))
+
 data<- list(N=n, y=y, a=-10, b=10)
 fit <- stan(file="biparametric.stan", data = data, chains = 4, iter=2000, refresh=-1)
 sim <- extract(fit)
@@ -393,8 +620,6 @@ We can see from the plots that mean and variance results for both $\theta$ and $
 We start by loading `soccergoals` data from `LearnBayes` library and reading in the data.
 
 ```{r echo=TRUE,  message=FALSE, warning=FALSE}
-library(LearnBayes)
-
 data(soccergoals)
 y <- soccergoals$goals
 ```
@@ -458,7 +683,7 @@ lty=c(1,2,3,4,5), col=c("black", "red", "blue", "green", "violet"),lwd=2, cex=0.
 
 ```
 
-Fig 10: Depicts the various prior and likelihodd function. We can observe that likelihood estimate of `theta` stands around 0.49. The red curve represents `prior 1` with gamma distribution which estimates mean in log scale around -0.48. The green curve for prior three is quite far from the likelihood and the blue color. The violet curve represents prior 4 which is almost flat and is spread out with high uncertainity. 
+Depicts the various prior and likelihodd function. We can observe that likelihood estimate of `theta` stands around 0.49. The red curve represents `prior 1` with gamma distribution which estimates mean in log scale around -0.48. The green curve for prior three is quite far from the likelihood and the blue color. The violet curve represents prior 4 which is almost flat and is spread out with high uncertainity. 
 
 Then, using $\theta$=log($\lambda$) and calling above functions for likelihood and prior, we compute the log posteriors.
 
@@ -491,7 +716,7 @@ logpoissonnormal.v <- Vectorize( logpoissonnormal, "theta")
 The log marginal likelihoods can be computed using the function laplace() as below:
 
 ```{r echo=TRUE,  message=FALSE, warning=FALSE}
-datapar <- list(data=y, par=c(4.57, 1.43))
+datapar <- list(data=y, par=c(2, 4))
 fit1 <- laplace(logpoissongamma, .5, datapar)
 datapar <- list(data=y, par=c(1, .5))
 fit2 <- laplace(logpoissonnormal, .5, datapar)
@@ -524,7 +749,7 @@ round_bf
 
 ## Exercise 11
 
-**Let $y=(1,0,0,1,0,0,0,0,0,1,0,0,1,0)$ collect the results of tossing $n=14$ times an unfair coin, where 1 denotes _heads_ and 0 _tails_, and $p=Prob(y_i=1)$.**
+**Let $y=(1,0,0,1,0,0,0,0,0,1,0,0,1,0)$ collect the results of tossing $n=14$ times an unfair coin, where 1 denotes _heads_ and 0 _tails_, and $p=\text{Prob}(y_i=1)$.**
 
 * **Looking at the `Stan` code for the other models, write a short Stan Beta-Binomial model, where $p$ has a $\text{Beta}(a,b)$ prior with $a=3, b=3$.**
 
@@ -533,6 +758,26 @@ round_bf
 * **produce some plots with the `bayesplot` package and comment.**
 
 * **compute analitically the posterior distribution and compare it with the `Stan` distribution.**
+
+The beta-binomial stan file used is:
+
+```
+data{
+  int N;
+  int y;
+  real<lower=0> alpha;
+  real<lower=0> beta;
+}
+
+parameters{
+  real p;
+}
+
+model{
+  target+=binomial_lpmf(y|N, p); 
+  target+=beta_lpdf(p|alpha, beta);
+}
+```
 
 ```{r echo=TRUE,  message=FALSE, warning=FALSE}
 y <- c(1,0,0,1,0,0,0,0,0,1,0,0,1,0)
