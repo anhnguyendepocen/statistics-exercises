@@ -6,10 +6,10 @@ data{
 }
 
 parameters{
-  real p;
+  real theta;
 }
 
 model{
-  target+=binomial_lpmf(y|N, p); 
-  target+=beta_lpdf(p|alpha, beta);
+  target+=binomial_lpmf(y|N, theta); 
+  target+=beta_lpdf(theta|alpha, beta);
 }

@@ -23,7 +23,7 @@ rstan_options(auto_write = TRUE)
 
 **Compute the bootstrap-based confidence interval for the `score` dataset using the studentized method.**
 
-The `score` dataset was found [here](https://web.stanford.edu/~hastie/CASI_files/DATA/student_score.txt).
+The `score` dataset used for the exercise was found [here](https://web.stanford.edu/~hastie/CASI_files/DATA/student_score.txt).
 
 ```{r echo=TRUE,  message=FALSE, warning=FALSE}
 score <- read.table("student_score.txt",header = TRUE)
@@ -106,7 +106,7 @@ ggplot(data, aes(x=s_vect, y=..ncount..))+
 
 **Compute bootstrap-based confidence intervals for the `score` dataset using the `boot` package.**
 
-The `score` dataset was found [here](https://web.stanford.edu/~hastie/CASI_files/DATA/student_score.txt).
+The `score` dataset used for the exercise was found [here](https://web.stanford.edu/~hastie/CASI_files/DATA/student_score.txt).
 
 ```{r echo=TRUE,  message=FALSE, warning=FALSE}
 psi_fun_boot <-function(data, id) {
@@ -377,7 +377,7 @@ p_lrt
 
 From above result, we can observe that the associated p-value `p_lrt` is very small, so we reject $H_0$ at the 5% siginificance level. 
 
-The Wald test statistic has the form  $ W_e(\gamma_o)=\hat{\gamma}-\gamma_o/SE(\hat\gamma)^2$  which follows Chi-square distribution with 1 degree of freedom. The Wald test statistics can be obtained as below:
+The Wald test statistic has the form  $W_e(\gamma_o)=\hat{\gamma}-\gamma_o/SE(\hat\gamma)^2$  which follows a Chi-square distribution with 1 degree of freedom. The Wald test statistics can be obtained as below:
 
 ```{r echo=TRUE,  message=FALSE, warning=FALSE}
 #standard error
@@ -393,7 +393,7 @@ Now the assocaited p-value for the above Wald test is :
 p_wald <- pchisq(lambda_wald, 1, lower.tail = FALSE)
 p_wald
 ```
-The associated p-value is 2.155894e-06, so we reject the null hypothesis at 5% significance level.
+The associated p-value `p_wald` is also very small, so we reject the null hypothesis at 5% significance level.
 
 The two tests performed above are asymtotically equivalent and both rejects the null hypothesis i.e. rejects the hypothesis that shape parameter is equal to 1.
 
@@ -418,6 +418,25 @@ From both representations, the Posterior mean can be seen as the prior mean/ MLE
 ## Exercise 6
 
 **In `sim` in the code above, you find the MCMC output which allows to approximate the posterior distribution of our parameter of interest with $S$ draws of θ. Please, produce an histogram for these random draws $\theta^{(1)},\dots,\theta^{(S)}, compute the empirical quantiles, and overlap the true posterior distribution.**
+
+The `normal.stan` file used for this exercise contains the following code:
+
+```
+data{
+  int N;
+  real y[N];
+  real<lower=0> sigma;
+  real mu;
+  real<lower=0> tau;
+}
+parameters{
+  real theta;
+}
+model{
+  target+=normal_lpdf(y|theta, sigma);
+  target+=normal_lpdf(theta|mu, tau );
+}
+```
 
 ```{r echo=TRUE,  message=FALSE, warning=FALSE}
 #input values
@@ -490,7 +509,7 @@ color_scheme_set("red")
 mcmc_intervals(posterior, pars = c("theta"))
 ```
 
-Figure depicts the uncertainity interval of parameter theta computed from posterior draws with all chains merged. The circle point in the above figure is the posterior medians. Credible interval is based on the quantiles of the posterior distribution. By default the thick segments covers 50% intervals and the thinner outer lines covers 90% interval. So, given the data the 90% bayesian posterior credible interval includes the true `theta` with probabilty 0.9.
+Previous figure depicts the uncertainity interval of parameter theta computed from posterior draws with all chains merged. The circle point in the above figure is the posterior medians. The interval is based on the quantiles of the posterior distribution. By default the thick segments covers 50% intervals and the thinner outer lines covers 90% interval. So, given the data the 90% bayesian posterior interval has a probability of 0.9 of including the true `theta` parameter.
 
 * **Plotting posterior area. **
 
@@ -507,7 +526,7 @@ mcmc_areas(
  )
 ```
 
-Figure depicts the density plots computed from posterior draws with all chains merged. The shaded area under the curve is the uncertainity interval. The plot suggests that probability of `theta` being a member of 80% credible interval is 0.8. The plot also shows the best estimate (mean) of theta around 2.9.
+ Previous figure depicts the density plots computed from posterior draws with all chains merged. The shaded area under the curve is the uncertainity interval. The plot suggests that probability of `theta` being a member of 80% confidence interval is 0.8. The plot also shows the best estimate (mean) of theta around 2.0.
 
 
 * **marginal posterior distributions for the parameters.**
@@ -517,7 +536,7 @@ color_scheme_set("green")
 mcmc_hist(posterior, pars = c("theta"))
 ```
 
-Figure depicts the marginal posterior distribution for parameter of interest `theta`. The histogram indicates the number of times different value of `theta` was sampled from the posterior.
+ Previous figure depicts the marginal posterior distribution for parameter of interest `theta`. The histogram indicates the number of times different values of `theta` were sampled from the posterior.
 
 ## Exercise 8
 
@@ -575,7 +594,8 @@ legend("topright", col =c("red", "green", "blue" ),
          "Actual Posterior"), lty=c(1,1,2),lwd=c(1,1,3), cex=1)
 
 ```
-From the plot we can deduce that the Theoretical posterior coincides with the posterior obtained as the product of likelihood and prior. 
+
+From the plot we can deduce that the theoretical posterior coincides with the posterior obtained as the product of likelihood and prior. 
 
 ## Exercise 9
 
@@ -588,6 +608,26 @@ From the plot we can deduce that the Theoretical posterior coincides with the po
 `target += uniform_lpdf(sigma|0.1,10);`
 
 **Which prior are you now assuming for your parameter $\sigma$? Reproduce the same plots as above and briefly comment.**
+
+The `biparametric.stan` file used in this exercise contains the following code:
+
+```
+data{
+  int N;
+  real y[N];
+  real a;
+  real b;
+}
+parameters{
+  real theta;
+  real<lower=0> sigma;
+}
+model{
+  target+=normal_lpdf(y|theta, sigma);
+  target+=uniform_lpdf(theta|a, b );
+  target+=uniform_lpdf(sigma| 0.1, 10);
+}
+```
 
 We are assuming a uniform prior for parameter $\sigma$ such that $\sigma \sim \text{Unif}(0.1, 10)$.
 
@@ -611,7 +651,7 @@ plot_title <- ggtitle("Posterior distributions", "with medians and 80% intervals
 mcmc_areas(posterior_biv, pars = c("theta","sigma"), prob = 0.8) + plot_title
 ```
 
-We can see from the plots that mean and variance results for both $\theta$ and $\sigma$ are different, which is totally normal given the change we performed in our set of priors.
+We can see from the plots that mean and variance results for both $\theta$ and $\sigma$ are slightly different, which is totally normal given the change we performed in our set of priors. The fact that the difference between the new plots and the old ones isn't evident and variances of parameters (especially theta's one) are quite large suggests that priors used don't provide much information to the posterior distributions.
 
 ## Exercise 10
 
@@ -683,7 +723,7 @@ lty=c(1,2,3,4,5), col=c("black", "red", "blue", "green", "violet"),lwd=2, cex=0.
 
 ```
 
-Depicts the various prior and likelihodd function. We can observe that likelihood estimate of `theta` stands around 0.49. The red curve represents `prior 1` with gamma distribution which estimates mean in log scale around -0.48. The green curve for prior three is quite far from the likelihood and the blue color. The violet curve represents prior 4 which is almost flat and is spread out with high uncertainity. 
+The previous figure depicts the various priors and the likelihood function we are taking into account. We can observe that likelihood estimate of `theta` stands around 0.5. The red curve represents `prior 1` with gamma distribution which estimates mean in log scale around -0.48. The green curve for `prior three` is quite far from the likelihood and the blue-colored `prior two`. The violet curve represents `prior four` which is almost flat and is spread out with high variance. 
 
 Then, using $\theta$=log($\lambda$) and calling above functions for likelihood and prior, we compute the log posteriors.
 
@@ -770,44 +810,61 @@ data{
 }
 
 parameters{
-  real p;
+  real theta;
 }
 
 model{
-  target+=binomial_lpmf(y|N, p); 
-  target+=beta_lpdf(p|alpha, beta);
+  target+=binomial_lpmf(y|N, theta); 
+  target+=beta_lpdf(theta|alpha, beta);
 }
 ```
 
 ```{r echo=TRUE,  message=FALSE, warning=FALSE}
 y <- c(1,0,0,1,0,0,0,0,0,1,0,0,1,0)
-n <- 14
-succ_prob <- sum(y)/n
+n <- length(y)
+N_1 <- sum(y) # Positive outcome estimate
+N_0 <- n - N_1 # Negative outcome estimate
 
 alpha <- 3
 beta <- 3
 
-data <- list(N=n, y=sum(y), alpha=alpha, beta=beta)
+data <- list(N=n, y=N_1, alpha=alpha, beta=beta)
 fit <- stan(file="beta-binomial.stan", data = data, chains = 4, iter = 2000)
 sim <- extract(fit)
 
 posterior_biv <- as.matrix(fit)
 plot_title <- ggtitle("Posterior distributions", "with medians and 80% intervals")
-mcmc_areas(posterior_biv, pars = c("p"), prob = 0.8) + plot_title
+mcmc_areas(posterior_biv, pars = c("theta"), prob = 0.8) + plot_title
+mcmc_intervals(posterior_biv, pars = c("theta"))
+```
 
-# prior distribution
+We can see above different visualizations generated using the `bayesplot` package of confidence intervals and posterior distribution for our beta-binomial model. We see from the plots that the variance of the parameter `p` isn't very large, that the parameter has its median around 0.35 and that the its 80% intervals goes roughly from 0.21 to 0.49.
+
+The **likelihood** for the Beta-Binomial model is a binomial distribution such as:
+
+$$p(Y|\theta) \sim \text{Bin}(N_1| \theta, N_0 + N_1)$$
+
+and the **prior** is a beta distribution such as:
+
+$$p(\theta) = \text{Beta}(\theta| \alpha, \beta)$$
+
+Thus, we have that the true posterior is such that
+
+$$p(\theta\;|\; Y) \propto \text{Bin}(N_1\;|\; \theta, N_0 + N_1) \;\;\text{Beta}(\theta\;|\; \alpha, \beta) \propto \text{Beta}(\theta\;|\; N_1 + \alpha, N_0 + \beta)$$
+
+That is, a Beta distribution of parameters $N_1 + \alpha = 7, N_0 + \beta = 13$
+
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+# Prior distribution
 curve(dbeta(x, alpha, beta), ylab = "density", lty = 2, col = "red", xlim = c(-0.25,1.25), ylim=c(0,4))
   
 # Stan posterior distribution
-lines(density(sim$p, adj=2), col="blue", lty=2, add=TRUE)
+lines(density(sim$theta, adj=2), col="blue", lty=2, add=TRUE)
 
-alpha_star <- alpha + sum(y)
-beta_star <- beta + n - sum(y)
-
-# true posterior distribution
-curve(dbeta(x, alpha_star, beta_star), lty=1, col="black", add=TRUE)
+# True posterior distribution
+curve(dbeta(x, alpha + N_1, beta + N_0), lty=1, col="black", add=TRUE)
 
 legend(0.75, 3.5, c("Prior distribution", "Stan posterior", "True posterior"), c("red", "blue", "black"))
 ```
 
-# Comment?
+We can see from the previous image that the Stan-generated posterior is very close to the true posterior for the Beta-Binomial distribution.
