@@ -1,7 +1,7 @@
 ---
 title: "Homework 3 - Group E"
 author: "Michela Venturini, Rabindra Khadka, Gabriele Sarti"
-date: "April 22, 2019"
+date: "May 6, 2019"
 output:
   html_document:
     toc: true

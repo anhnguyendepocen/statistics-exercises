@@ -60,7 +60,6 @@ In this section are listed the homeworks assigned from the previously cited sour
 | Marco Franzon    | 3.10, 4.6 | /   | 2, 5 |
 | Eduardo Gonnelli | 3.11, 4.7 | 3.3 | 3    |
 
-
 ### Homework 3 - Current
 
 * **Due date:** May, Tuesday 7th 2019
@@ -78,11 +77,29 @@ In this section are listed the homeworks assigned from the previously cited sour
     * Compute bootstrap-based confidence intervals for the score dataset using the boot package.
 
     (For both 1 and 2, refer to the theoretical lecture about bootstrap.)
-    
-  * LAB 3 from 1 to 11
+
+  * LAB 3
 
 |                   | LEC | LAB         |
 |-------------------|-----|-------------|
 | Michela Venturini | 1   | 2, 5, 8     |
 | Gabriele Sarti    | 2   | 3, 6, 9, 11 |
 | Rabindra Khadka   | /   | 1, 4, 7, 10 |
+
+### Homework 4 - Current
+
+* **Due date:** May, Thursday 30th 2019
+
+* **Group:** Group E
+
+* **Members:** Michela Venturini, Gabriele Sarti, Katja Valjavec
+
+* **Sources:**
+
+  * DAAG, Chapter 6 and 8
+
+|                   |      DAAG      |
+|-------------------|----------------|
+| Michela Venturini | 6.6, 6.10, 8.5 |
+| Gabriele Sarti    | 6.7, 8.1, 8.6  |
+| Katja Valjavec    | 6.8, 8.2       |
