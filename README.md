@@ -60,7 +60,7 @@ In this section are listed the homeworks assigned from the previously cited sour
 | Marco Franzon    | 3.10, 4.6 | /   | 2, 5 |
 | Eduardo Gonnelli | 3.11, 4.7 | 3.3 | 3    |
 
-### Homework 3 - Current
+### Homework 3 - Grade: A
 
 * **Due date:** May, Tuesday 7th 2019
 
