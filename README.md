@@ -118,6 +118,6 @@ In this section are listed the homeworks assigned from the previously cited sour
 
   * All sources listed above
 
-|                   |    DAAG    |    CS    |  BC |
-|-------------------|------------|----------|-----|
-| Gabriele Sarti    | 4.21, 7.23 | 3.2, 4.6 | 3.3 |
+|                   |    DAAG   |    CS    |  BC |
+|-------------------|-----------|----------|-----|
+| Gabriele Sarti    | 4.21, 7.3 | 3.2, 4.6 | 3.3 |
