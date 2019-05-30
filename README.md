@@ -12,6 +12,8 @@ This repository contains the homeworks for the course **"Statistical Methods for
 
 * Theoretical lectures, here referred to as **LEC**.
 
+* [Bayesian Computation with R](https://bayanbox.ir/view/1647978758425492217/Bayesian-Computation-With-R-Albert.pdf) by Jim Albert, here referred to as BC
+
 ## Homeworks
 
 In this section are listed the homeworks assigned from the previously cited sources, alongside the group name, team composition and work division. Even though homeworks were splitted between team members to make their completion faster, they are reviewed entirely by all team members in order to ensure their correctness.
@@ -103,3 +105,19 @@ In this section are listed the homeworks assigned from the previously cited sour
 | Michela Venturini | 6.6, 6.10, 8.5 |
 | Gabriele Sarti    | 6.7, 8.1, 8.6  |
 | Katja Valjavec    | 6.8, 8.2       |
+
+### Homework 5 - Current
+
+* **Due date:** June, Sunday 23rd 2019
+
+* **Group:** Alone
+
+* **Members:** Gabriele Sarti
+
+* **Sources:**
+
+  * All sources listed above
+
+|                   |    DAAG    |    CS    |  BC |
+|-------------------|------------|----------|-----|
+| Gabriele Sarti    | 4.21, 7.23 | 3.2, 4.6 | 3.3 |

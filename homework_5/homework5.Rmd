@@ -1,0 +1,62 @@
+---
+title: "Homework 5 - Sarti"
+author: "Gabriele Sarti"
+date: "June 23, 2019"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    highlight: tango
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+set.seed(42)
+```
+
+# Data Analysis and Graphics Using R
+
+## Exercise 4.21
+
+**Suppose the mean reaction time to a particular stimulus has been estimated in several previous studies, and it appears to be approximately normally distributed with mean $0.35$ seconds with standard deviation $0.1$ seconds. On the basis of 10 new observations, the mean reaction time is estimated to be $0.45$ seconds with an estimated standard deviation of $0.15$ seconds. Based onthe sample information, what is the maximum likelihood estimator for the true mean reaction time? What is the Bayes’ estimate of the mean reaction time?**
+
+## Exercise 7.3
+
+**Use the method of Section 7.3 to compare, formally, the regression lines for the two data frames `elastic1` and `elastic2` from Exercise 1 in Chapter 5.**
+
+**(The data sets `elastic1` and `elastic2` were obtained using the same apparatus, including the same rubber band, as the data frame `elasticband`. Using a different symbol and/or a different color, plot the data from the two data frames `elastic1` and `elastic2` on the same graph. Do the two sets of results appear consistent?)**
+
+# Core Statistics
+
+## Exercise 3.2
+
+**Rewrite the following to eliminate the loops, first using `apply` and then using `rowSums`:
+
+```
+X <- matrix(runif(100000),1000,100); z <- rep(0,1000)
+for (i in 1:1000) {
+  for (j in 1:100) z[i] <- z[i] + X[i,j]
+}
+```
+
+**Confirm that all three versions give the same answers, but that your rewrites are much faster than the original. (`system.time` is a useful function.)**
+
+## Exercise 4.6
+
+**?**
+
+# Bayesian Computation
+
+## Exericse 3.3
+
+**Learning about the upper bound of a discrete uniform density**
+
+**Suppose one takes independent observations $y_1, ..., y_n$ from a uniform distribution on the set ${1,2, ..., N}$, where the upper bound $N$ is unknown. Suppose one places a uniform prior for $N$ on the values $1, ..., B$, where $B$ is known. Then the posterior probabilities for $N$ are given by** 
+
+$$g(N|y)∝\frac{1}{N^n},\;\;y_{(n)}≤N≤B$$
+
+**where $y_{(n)}$ is the maximum observation. To illustrate this situation, suppose a tourist is waiting for a taxi in a city. During this waiting time, she observes five taxis with the numbers 43, 24, 100, 35, and 85. She assumes that taxis in this city are numbered from 1 to $N$, she is equally likely to observe any numbered taxi at a given time, and observations are independent. She also knows that there cannot be more than 200 taxis in the city.**
+
+**a) Use R to compute the posterior probabilities of $N$ on a grid of values.** 
+**b) Compute the posterior mean and posterior standard deviation of $N$.**
+**c) Find the probability that there are more than 150 taxis in the city.**
