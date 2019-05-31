@@ -12,6 +12,7 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 set.seed(42)
+library(DAAG)
 ```
 
 # Data Analysis and Graphics Using R
@@ -20,24 +21,126 @@ set.seed(42)
 
 **Suppose the mean reaction time to a particular stimulus has been estimated in several previous studies, and it appears to be approximately normally distributed with mean $0.35$ seconds with standard deviation $0.1$ seconds. On the basis of 10 new observations, the mean reaction time is estimated to be $0.45$ seconds with an estimated standard deviation of $0.15$ seconds. Based onthe sample information, what is the maximum likelihood estimator for the true mean reaction time? What is the Bayes’ estimate of the mean reaction time?**
 
+Since the data are approximately normally distributed, the maximum likelihood estimators for the true mean reaction time are equal to the sample mean, $0.45$, and the unadjusted sample variance $0.15^2 = 0.0225$.
+
+In order to obtain the Bayes' estimate of the mean reaction time we use the formulas for the posterior density of the mean presented in chapter 4.8.2, which is normal with mean
+
+$$\frac{n \bar y + \mu_0 \sigma^2 / \sigma_0^2}{n + \sigma^2 / \sigma_0^2}$$
+and variance
+
+$$\frac{\sigma^2}{n + \sigma^2 / \sigma_0^2}$$
+
+We substitute the variables in the formula with the values given by the assignment:
+
+* $n$ is the added sample size, $10$
+
+* $\mu_0$ is the estimated mean of the original sample, $0.35$
+
+* $\sigma_0$ is the standard deviation of the original sample, $0.1$
+
+* $\bar y$ is the new sample mean, $0.45$
+
+* We don't have the true standard deviation $\sigma$, but we can estimate it using the new sample standard deviation, $0.15$
+
+We proceed to compute Bayes' estimates for both the mean and the variance of the distribution by computing the posterior mean and variance:
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+n = 10
+mu0 = 0.35
+s0 = 0.1
+y = 0.45
+s = 0.15
+
+print(paste("Bayes mean:", (n * y + mu0 * s^2 / s0^2)/(n + s^2 / s0^2)))
+print(paste("Bayes variance:", (s^2)/(n + s^2 / s0^2)))
+```
+
 ## Exercise 7.3
 
 **Use the method of Section 7.3 to compare, formally, the regression lines for the two data frames `elastic1` and `elastic2` from Exercise 1 in Chapter 5.**
 
-**(The data sets `elastic1` and `elastic2` were obtained using the same apparatus, including the same rubber band, as the data frame `elasticband`. Using a different symbol and/or a different color, plot the data from the two data frames `elastic1` and `elastic2` on the same graph. Do the two sets of results appear consistent?)**
+We start by creating single dataframe from `elastic1` and `elastic2`:
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+elastic1$experiment <- rep(1, length(elastic1$stretch))
+elastic2$experiment <- rep(2, length(elastic2$stretch))
+elastic <- rbind(elastic1, elastic2)
+elastic$experiment <- factor(elastic$experiment)
+```
+
+We fit all the three possible linear models, respectively:
+
+* The simple `distance ~ stretch` linear model on data, which will generate a single regression line.
+
+* The model `distance ~ stretch + experiment`, which will generate a line for each experiment varying only the intercept.
+
+* The model `distance ~ stretch * experiment` in which the interaction factor between `stretch` and `experiment` is taken into account, and the two regression lines are no longer parallel.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+lm1 <- lm(distance ~ stretch, data = elastic)
+lm2 <- lm(distance ~ stretch + experiment, data = elastic)
+lm3 <- lm(distance ~ stretch * experiment, data = elastic)
+```
+
+We visualize the diagnostic plots for our models:
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+par(mfrow=c(2,2))
+plot(lm1)
+plot(lm2)
+plot(lm3)
+```
+
+We can see from those that the observation `7` may be problematic because of its high residuals, and the Residual vs Leverage plot `lm3` sees it as an influential outlier. We proceed to a preliminary ANOVA test to test model significance:
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+anova(lm1, lm2, lm3)
+```
+
+We see there is only a low degree of evidence in favor of the model where we vary the intercept based on the experiment. We now try to get rid of the problematic observation mentioned before and repeat the same procedure:
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+elasticfix = elastic[-7,]
+lm1 <- lm(distance ~ stretch, data = elasticfix)
+lm2 <- lm(distance ~ stretch + experiment, data = elasticfix)
+lm3 <- lm(distance ~ stretch * experiment, data = elasticfix)
+anova(lm1, lm2, lm3)
+```
+
+We see that after getting rid of `7` we have no significant evidence of a difference between the regression lines of the models.
 
 # Core Statistics
 
 ## Exercise 3.2
 
-**Rewrite the following to eliminate the loops, first using `apply` and then using `rowSums`:
+**Rewrite the following to eliminate the loops, first using `apply` and then using `rowSums`:**
 
-```
-X <- matrix(runif(100000),1000,100); z <- rep(0,1000)
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+set.seed(42)
+X <- matrix(runif(100000),1000,100); z1 <- rep(0,1000)
+
+ptm <- proc.time()
 for (i in 1:1000) {
-  for (j in 1:100) z[i] <- z[i] + X[i,j]
+  for (j in 1:100) z1[i] <- z1[i] + X[i,j]
 }
+proc.time() - ptm
 ```
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+set.seed(42)
+X <- matrix(runif(100000),1000,100); z2 <- rep(0,1000)
+system.time(z2 <- apply(X, 1, sum))
+all.equal(z1, z2)
+```
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+set.seed(42)
+X <- matrix(runif(100000),1000,100); z3 <- rep(0,1000)
+system.time(z3 <- rowSums(X))
+all.equal(z1, z2, z3)
+```
+
+The `rowSums` function is clearly the most optimized one for this task, with `apply` being a close second.
 
 **Confirm that all three versions give the same answers, but that your rewrites are much faster than the original. (`system.time` is a useful function.)**
 
