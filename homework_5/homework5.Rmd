@@ -12,7 +12,7 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 set.seed(42)
-library(DAAG)
+library(DAAG); library(ggplot2)
 ```
 
 # Data Analysis and Graphics Using R
@@ -150,7 +150,7 @@ The `rowSums` function is clearly the most optimized one for this task, with `ap
 
 # Bayesian Computation
 
-## Exericse 3.3
+## Exericise 3.3
 
 **Learning about the upper bound of a discrete uniform density**
 
@@ -160,6 +160,43 @@ $$g(N|y)∝\frac{1}{N^n},\;\;y_{(n)}≤N≤B$$
 
 **where $y_{(n)}$ is the maximum observation. To illustrate this situation, suppose a tourist is waiting for a taxi in a city. During this waiting time, she observes five taxis with the numbers 43, 24, 100, 35, and 85. She assumes that taxis in this city are numbered from 1 to $N$, she is equally likely to observe any numbered taxi at a given time, and observations are independent. She also knows that there cannot be more than 200 taxis in the city.**
 
-**a) Use R to compute the posterior probabilities of $N$ on a grid of values.** 
+**a) Use R to compute the posterior probabilities of $N$ on a grid of values.**
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+y <- c(43, 24, 100, 35, 85)
+B <- 200
+N <- 1:B
+
+# There can't be less than max(Y) = 100 taxis, posterior between 0 and 99 = 0%
+posterior <- function(N, y) {
+  return(ifelse( max(y) > N, 0, 1 / N^length(y)))
+}
+
+prob <- sapply(N, posterior, y = y)
+prob <- prob / sum(prob) # Scale by sum to obtain final probabilities
+
+df <- data.frame(N, prob)
+
+ggplot(df,aes(N,prob)) + 
+  geom_col(colour = "blue") +
+  scale_y_continuous(labels = scales::percent) +
+  scale_x_continuous(limits = c(100, 200)) +
+  labs(title = "Posterior distribution for N",
+       x = "N",
+       y = "Posterior probability")
+```
+
 **b) Compute the posterior mean and posterior standard deviation of $N$.**
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+mean <- sum(N * prob)
+sd <- sqrt(sum(prob * (N - mean)^2))
+print(paste("Posterior mean:", mean))
+print(paste("Posterior standard deviation:", sd))
+```
+
 **c) Find the probability that there are more than 150 taxis in the city.**
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+print(paste("Probability of having more than 150 taxis:", sum(df[df$N > 150,]$prob)))
+```
