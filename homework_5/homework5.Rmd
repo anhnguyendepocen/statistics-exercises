@@ -21,7 +21,7 @@ library(DAAG); library(ggplot2)
 
 **Suppose the mean reaction time to a particular stimulus has been estimated in several previous studies, and it appears to be approximately normally distributed with mean $0.35$ seconds with standard deviation $0.1$ seconds. On the basis of 10 new observations, the mean reaction time is estimated to be $0.45$ seconds with an estimated standard deviation of $0.15$ seconds. Based onthe sample information, what is the maximum likelihood estimator for the true mean reaction time? What is the Bayes’ estimate of the mean reaction time?**
 
-Since the data are approximately normally distributed, the maximum likelihood estimators for the true mean reaction time are equal to the sample mean, $0.45$, and the unadjusted sample variance $0.15^2 = 0.0225$.
+Since the data are approximately normally distributed, the maximum likelihood estimators for the true mean reaction time are equal to the sample mean, $0.45$, and the sample variance $0.15^2 = 0.0225$.
 
 In order to obtain the Bayes' estimate of the mean reaction time we use the formulas for the posterior density of the mean presented in chapter 4.8.2, which is normal with mean
 
@@ -126,6 +126,8 @@ for (i in 1:1000) {
 proc.time() - ptm
 ```
 
+**Confirm that all three versions give the same answers, but that your rewrites are much faster than the original. (`system.time` is a useful function.)**
+
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 set.seed(42)
 X <- matrix(runif(100000),1000,100); z2 <- rep(0,1000)
@@ -142,11 +144,63 @@ all.equal(z1, z2, z3)
 
 The `rowSums` function is clearly the most optimized one for this task, with `apply` being a close second.
 
-**Confirm that all three versions give the same answers, but that your rewrites are much faster than the original. (`system.time` is a useful function.)**
+## Exercise 4.4
 
-## Exercise 4.6
+**Suppose that you have $n$ independent measurements of times between major aircraft disasters, $t_i$, and believe that the probability density function for the $t_i$’s is of the form: $f(t) = ke^{−λt^2},\;\;t≥0$ where $λ$ and $k$ are the same for all $i$.**
 
-**?**
+**(a) By considering the normal p.d.f., show that $k=\sqrt{4λ/π}$.**
+
+We consider the normal p.d.f. centered in 0 ($\mu = 0$) with only positive values (since $t = x - \mu = x \geq 0$, so the normal p.d.f. must be multiplied by 2) to match the p.d.f. specified for the $t_i$'s:
+
+$$f(t) = \frac{2}{\sqrt{2\pi\sigma^2}}\exp\{-\frac{(x - \mu)^2}{2\sigma^2}\} = ke^{-\lambda t^2}$$
+
+where $k = \frac{2}{\sqrt{2\pi\sigma^2}}$, $t = (x - \mu)$ and $\lambda = \frac{1}{2\sigma^2}$. The exercise want us to prove that $k = \sqrt{4λ/π}$, which is true since
+
+$$k = \frac{2}{\sqrt{2\pi\sigma^2}} = \sqrt{\frac{4}{2\pi\sigma^2}} = \sqrt{4 \frac{1}{2\sigma^2}\frac{1}{\pi}} = \sqrt{4\lambda/\pi}$$
+
+We assume that the exercise is wrong, and use the relation $k = \sqrt{\lambda/\pi}$
+
+**(b) Obtain a maximum likelihood estimator for $λ$.**
+
+First of all, we can compute the likelihood function for our distribution:
+
+$$L(t) = \prod_{i = 0}^nke^{-\lambda t^2} = k^n \prod_{i = 0}^n e^{-\lambda t_i^2}$$
+
+After that, we may apply the logarithm on $L$ to obtain the log likelihood of our distribution, that will make the estimation of our MLE for $\lambda$ easier (log transformation is invariant in maxima and minima of the original function):
+
+$$\ell(t) = n \log(k) - \lambda \sum_{i = 0}^n t_i^2 = n \log(\sqrt{4\lambda/\pi}) - \lambda \sum_{i = 0}^n t_i^2$$
+
+Finally, in order to obtain the maximum likelihood estimator for $\lambda$ we take the derivative of the log likelihood and set it to 0:
+
+$$\frac{d\ell}{d\lambda} = \frac{n}{2\lambda} - \sum_{i = 0}^n t_i^2 = 0$$
+$$\frac{2\lambda}{n} = \frac{1}{\sum_{i = 0}^n t_i^2}$$
+
+Finally, by simplifying the previous expression we obtain the value of $\lambda$'s MLE:
+
+$$\lambda = \frac{n}{2 \sum_{i = 0}^n t_i^2}$$
+
+**(c) Given observations of $T_i$ (in days) of: 243, 14, 121, 63, 45, 407 and 34 use a generalised likelihood ratio test to test $H_0: λ = 10^{−4}$ against the alternative of no restriction on $λ$ at the 5% significance level. Note that if $V∼χ^2_1$ then $\text{Pr}[V≤3.841] = 0.95$**
+
+```{r echo=TRUE,  message=FALSE, warning=FALSE}
+ loglik <- function(data, param){
+   length(data) * log(sqrt(4 * param / pi)) - param * sum(data^2)
+ }
+
+data <- c(243, 14, 121, 63, 45, 407, 34)
+
+mle <- length(data) / (2 * sum(data^2))
+print(paste("MLE for lambda given data:", mle))
+
+l_0 <- loglik(data, 10^-4)
+l_a <- loglik(data, mle) # When there is no restriction on lambda, we use the MLE to compute the log likelihood.
+
+lambda_lrt <- -2 * (l_0 - l_a)
+
+p_lrt <- pchisq(lambda_lrt, df=1, lower.tail = FALSE)
+print(paste("Likelihood ratio test p-value:", p_lrt))
+```
+
+Since the p-value for the likelihood ratio test with one degree of freedom is very low, we reject the null hypothesis, which is coherent given the MLE for our parameter $\lambda$ which is different from the one taken as null hypothesis.
 
 # Bayesian Computation
 
