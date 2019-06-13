@@ -1,7 +1,7 @@
 ---
 title: "Homework 5 - Sarti"
 author: "Gabriele Sarti"
-date: "June 23, 2019"
+date: "June 6, 2019"
 output:
   html_document:
     toc: true
@@ -129,15 +129,12 @@ proc.time() - ptm
 **Confirm that all three versions give the same answers, but that your rewrites are much faster than the original. (`system.time` is a useful function.)**
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
-set.seed(42)
-X <- matrix(runif(100000),1000,100); z2 <- rep(0,1000)
+z2 <- rep(0,1000)
 system.time(z2 <- apply(X, 1, sum))
-all.equal(z1, z2)
 ```
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
-set.seed(42)
-X <- matrix(runif(100000),1000,100); z3 <- rep(0,1000)
+z3 <- rep(0,1000)
 system.time(z3 <- rowSums(X))
 all.equal(z1, z2, z3)
 ```
