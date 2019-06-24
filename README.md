@@ -88,7 +88,7 @@ In this section are listed the homeworks assigned from the previously cited sour
 | Gabriele Sarti    | 2   | 3, 6, 9, 11 |
 | Rabindra Khadka   | /   | 1, 4, 7, 10 |
 
-### Homework 4 - Current
+### Homework 4 - Grade: A
 
 * **Due date:** May, Thursday 30th 2019
 
