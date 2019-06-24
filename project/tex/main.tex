@@ -298,7 +298,7 @@ Is pretty rare to instantiate a raw \code{RObject}. It is preferable to work wit
 
 \bigskip
 
-Templated function \code{as<>()} and class constructors with \code{R} objects as argument are used to convert a \code{SEXP} structure to the corresponding \code{Rcpp} type. The \code{SEXP} to \code{R} can be returned by using \code{warp()}. \pause
+Templated function \code{as<>()} and class constructors with \code{R} objects as argument are used to convert a \code{SEXP} structure to the corresponding \code{Rcpp} type. The \code{SEXP} to \code{R} can be returned by using \code{wrap()}. \pause
 
 \bigskip
 
@@ -465,7 +465,7 @@ The only difference is the type declaration and the missing operator \code{\^} i
 \frametitle{Rcpp Sugar: Performances}
 
 \begin{figure}[s3]
-    \includegraphics[width=0.9\textwidth]{sugar_hand_r.png}
+    \includegraphics[width=1\textwidth]{sugar_hand_r.png}
 \end{figure}
 
 Sugar functions don't always perform like hand-written ones in \code{C++} (for now!)
@@ -517,7 +517,7 @@ We just have to choose a name for the module, and declare a name for every class
 \frametitle{Exposing C++ classes: An Example}
 After compiling the \code{.cpp} file as a dynamic library, we load the module in \code{R}, and now it's ready to be used like a class.
 \begin{figure}[s2]
-    \includegraphics[width=0.5\textwidth]{exposing_classes_3.png}
+    \includegraphics[width=0.95\textwidth]{exposing_classes_3.png}
 \end{figure}
 \end{frame}
 %-----------------------------------
