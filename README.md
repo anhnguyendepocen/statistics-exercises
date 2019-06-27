@@ -106,7 +106,7 @@ In this section are listed the homeworks assigned from the previously cited sour
 | Gabriele Sarti    | 6.7, 8.1, 8.6  |
 | Katja Valjavec    | 6.8, 8.2       |
 
-### Homework 5 - Current
+### Homework 5 - Grade: A
 
 * **Due date:** June, Sunday 23rd 2019
 
